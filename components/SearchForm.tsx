@@ -166,16 +166,16 @@ export default function SearchForm({
             />
           </div>
           {showOriginDropdown && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-[999] max-h-60 overflow-y-auto">
               {originSuggestions.map((a) => (
                 <button
                   key={a.code}
                   type="button"
                   onClick={() => { setOrigin(a.code); setOriginLabel(`${a.city ?? a.name} (${a.code})`); setShowOriginDropdown(false); }}
-                  className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                  className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors flex items-center gap-2 overflow-hidden"
                 >
-                  <span className="font-semibold text-sm text-slate-800">{a.code}</span>
-                  <span className="text-sm text-slate-500 ml-2">{a.city ?? a.name}{a.country ? `, ${a.country}` : ""}</span>
+                  <span className="font-semibold text-sm text-slate-800 shrink-0">{a.code}</span>
+                  <span className="text-sm text-slate-500 truncate">{a.city ?? a.name}{a.country ? `, ${a.country}` : ""}</span>
                 </button>
               ))}
             </div>
@@ -206,16 +206,16 @@ export default function SearchForm({
             />
           </div>
           {showDestDropdown && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-[999] max-h-60 overflow-y-auto">
               {destSuggestions.map((a) => (
                 <button
                   key={a.code}
                   type="button"
                   onClick={() => { setDestination(a.code); setDestLabel(`${a.city ?? a.name} (${a.code})`); setShowDestDropdown(false); }}
-                  className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                  className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors flex items-center gap-2 overflow-hidden"
                 >
-                  <span className="font-semibold text-sm text-slate-800">{a.code}</span>
-                  <span className="text-sm text-slate-500 ml-2">{a.city ?? a.name}{a.country ? `, ${a.country}` : ""}</span>
+                  <span className="font-semibold text-sm text-slate-800 shrink-0">{a.code}</span>
+                  <span className="text-sm text-slate-500 truncate">{a.city ?? a.name}{a.country ? `, ${a.country}` : ""}</span>
                 </button>
               ))}
             </div>
