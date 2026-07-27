@@ -8,8 +8,10 @@ import { cn } from "@/lib/utils";
 interface AirportOption {
   code: string;
   name: string;
-  city: string;
-  country: string;
+  city?: string;
+  country?: string;
+  city_code?: string;
+  country_code?: string;
 }
 
 interface SearchFormProps {
@@ -169,11 +171,11 @@ export default function SearchForm({
                 <button
                   key={a.code}
                   type="button"
-                  onClick={() => { setOrigin(a.code); setOriginLabel(`${a.city} (${a.code})`); setShowOriginDropdown(false); }}
+                  onClick={() => { setOrigin(a.code); setOriginLabel(`${a.city ?? a.name} (${a.code})`); setShowOriginDropdown(false); }}
                   className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors"
                 >
                   <span className="font-semibold text-sm text-slate-800">{a.code}</span>
-                  <span className="text-sm text-slate-500 ml-2">{a.city}, {a.country}</span>
+                  <span className="text-sm text-slate-500 ml-2">{a.city ?? a.name}{a.country ? `, ${a.country}` : ""}</span>
                 </button>
               ))}
             </div>
@@ -209,11 +211,11 @@ export default function SearchForm({
                 <button
                   key={a.code}
                   type="button"
-                  onClick={() => { setDestination(a.code); setDestLabel(`${a.city} (${a.code})`); setShowDestDropdown(false); }}
+                  onClick={() => { setDestination(a.code); setDestLabel(`${a.city ?? a.name} (${a.code})`); setShowDestDropdown(false); }}
                   className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors"
                 >
                   <span className="font-semibold text-sm text-slate-800">{a.code}</span>
-                  <span className="text-sm text-slate-500 ml-2">{a.city}, {a.country}</span>
+                  <span className="text-sm text-slate-500 ml-2">{a.city ?? a.name}{a.country ? `, ${a.country}` : ""}</span>
                 </button>
               ))}
             </div>

@@ -10,10 +10,10 @@ const API_TOKEN = process.env.TRAVELPAYOUTS_TOKEN ?? "";
 export interface Airport {
   code: string;
   name: string;
-  city: string;
   city_code: string;
-  country: string;
   country_code: string;
+  city?: string;   // enriched from cities.json
+  country?: string; // enriched from cities.json
 }
 
 export interface FlightResult {
@@ -100,28 +100,81 @@ async function apiFetch<T>(url: string, cache: RequestCache = "no-store", revali
 // ---------------------------------------------------------------------------
 
 let airportCache: Airport[] | null = null;
+let cityNameMap: Map<string, string> | null = null;
+let countryNameMap: Map<string, string> | null = null;
+
+async function loadCityMap(): Promise<Map<string, string>> {
+  if (cityNameMap) return cityNameMap;
+  try {
+    const cities = await apiFetch<{ code: string; name: string; country_code: string }[]>(
+      "https://api.travelpayouts.com/data/en/cities.json",
+      "force-cache"
+    );
+    cityNameMap = new Map(cities.map((c) => [c.code, c.name]));
+  } catch {
+    cityNameMap = new Map();
+  }
+  return cityNameMap;
+}
+
+async function loadCountryMap(): Promise<Map<string, string>> {
+  if (countryNameMap) return countryNameMap;
+  try {
+    const countries = await apiFetch<{ code: string; name: string }[]>(
+      "https://api.travelpayouts.com/data/en/countries.json",
+      "force-cache"
+    );
+    countryNameMap = new Map(countries.map((c) => [c.code, c.name]));
+  } catch {
+    countryNameMap = new Map();
+  }
+  return countryNameMap;
+}
 
 export async function searchAirports(query: string): Promise<Airport[]> {
+  const [cities, countries] = await Promise.all([loadCityMap(), loadCountryMap()]);
+
   if (!airportCache) {
     try {
       const data = await apiFetch<Airport[]>(
         "https://api.travelpayouts.com/data/en/airports.json",
         "force-cache"
       );
-      airportCache = data;
+      airportCache = data.map((a) => ({
+        ...a,
+        city: cities.get(a.city_code) ?? a.city_code,
+        country: countries.get(a.country_code) ?? a.country_code,
+      }));
     } catch {
       return [];
     }
   }
 
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+
+  const score = (a: Airport): number => {
+    const code = a.code.toLowerCase();
+    const city = (a.city ?? "").toLowerCase();
+    const cityCode = a.city_code.toLowerCase();
+    const name = a.name.toLowerCase();
+    if (code === q) return 5;
+    if (code.startsWith(q)) return 4;
+    if (city.startsWith(q)) return 3;
+    if (cityCode.startsWith(q)) return 2;
+    if (name.startsWith(q)) return 1;
+    return 0;
+  };
+
   return airportCache
     .filter(
       (a) =>
         a.code?.toLowerCase().includes(q) ||
-        a.name?.toLowerCase().includes(q) ||
-        a.city?.toLowerCase().includes(q)
+        a.city_code?.toLowerCase().includes(q) ||
+        (a.city ?? "").toLowerCase().includes(q) ||
+        a.name?.toLowerCase().includes(q)
     )
+    .sort((a, b) => score(b) - score(a))
     .slice(0, 8);
 }
 
