@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SearchWidget from "@/components/SearchWidget";
+import HeroSearch from "@/components/HeroSearch";
 import PopularRoutes from "@/components/PopularRoutes";
 import HowItWorks from "@/components/HowItWorks";
 import { getPopularRoutes } from "@/lib/travelpayouts";
@@ -35,8 +35,8 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="relative z-20 w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
-          <SearchWidget />
+        <div className="relative z-20 w-full">
+          <HeroSearch />
         </div>
 
         {/* Trust badges */}
