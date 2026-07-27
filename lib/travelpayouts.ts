@@ -81,11 +81,10 @@ function buildAffiliateLink(path: string): string {
 }
 
 async function apiFetch<T>(url: string, cache: RequestCache = "no-store", revalidate?: number): Promise<T> {
-  const init: RequestInit = revalidate
-    ? { next: { revalidate }, headers: { "X-Access-Token": API_TOKEN } }
-    : { cache, headers: { "X-Access-Token": API_TOKEN } };
-
-  const res = await fetch(url, init);
+  const headers = { "X-Access-Token": API_TOKEN };
+  const res = revalidate
+    ? await fetch(url, { next: { revalidate }, headers } as RequestInit)
+    : await fetch(url, { cache, headers });
 
   if (res.status === 429) {
     throw new Error("RATE_LIMIT: Too many requests to Travelpayouts API");

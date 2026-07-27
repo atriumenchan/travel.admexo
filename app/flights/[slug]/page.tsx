@@ -57,7 +57,7 @@ async function FlightResults({ params, searchParams }: PageProps) {
     );
   }
 
-  let flights = [];
+  let flights: import("@/lib/travelpayouts").FlightResult[] = [];
   let error: string | null = null;
 
   try {
