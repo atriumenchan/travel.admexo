@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -35,6 +36,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          id="tp-drive"
+          src="https://tp-em.com/NTU1NDY5.js?t=555469"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className={inter.className}>
         <Navbar />
         <main className="min-h-screen">{children}</main>
