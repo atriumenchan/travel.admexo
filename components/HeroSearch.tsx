@@ -7,6 +7,7 @@ import SearchForm from "@/components/SearchForm";
 function LiveWidget() {
   const containerRef = useRef<HTMLDivElement>(null);
   const injected = useRef(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current || injected.current) return;
@@ -21,10 +22,36 @@ function LiveWidget() {
     script.src =
       "https://tpwdgt.com/content?currency=usd&trs=555469&shmarker=756745&locale=en&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=true&color_button=%2300A991&color_button_text=%23ffffff&promo_id=3414&campaign_id=111";
     script.setAttribute("charset", "utf-8");
+    script.onload = () => setTimeout(() => setLoaded(true), 300);
     containerRef.current.appendChild(script);
   }, []);
 
-  return <div ref={containerRef} className="w-full min-h-[80px]" />;
+  return (
+    <div className="relative w-full">
+      {/* Skeleton shown while widget loads */}
+      {!loaded && (
+        <div className="p-4 space-y-3">
+          <div className="flex gap-3">
+            <div className="h-11 flex-1 bg-slate-100 rounded-lg animate-pulse" />
+            <div className="h-11 flex-1 bg-slate-100 rounded-lg animate-pulse" />
+            <div className="h-11 w-32 bg-slate-100 rounded-lg animate-pulse" />
+            <div className="h-11 w-32 bg-slate-100 rounded-lg animate-pulse" />
+            <div className="h-11 w-28 bg-emerald-100 rounded-lg animate-pulse" />
+          </div>
+          <div className="flex items-center gap-2 pt-1">
+            <div className="h-3 w-24 bg-slate-100 rounded animate-pulse" />
+            <div className="h-3 w-3 bg-slate-100 rounded-full animate-pulse" />
+            <div className="h-3 w-20 bg-slate-100 rounded animate-pulse" />
+          </div>
+        </div>
+      )}
+      {/* Widget container — always mounted, hidden until loaded */}
+      <div
+        ref={containerRef}
+        className={`w-full transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none"}`}
+      />
+    </div>
+  );
 }
 
 export default function HeroSearch() {
