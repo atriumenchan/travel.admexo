@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import HeroSearch from "@/components/HeroSearch";
+import SearchForm from "@/components/SearchForm";
 import PopularRoutes from "@/components/PopularRoutes";
 import HowItWorks from "@/components/HowItWorks";
 import { getPopularRoutes } from "@/lib/travelpayouts";
@@ -35,8 +35,8 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="relative z-20 w-full">
-          <HeroSearch />
+        <div className="relative z-20 w-full max-w-6xl mx-auto">
+          <SearchForm />
         </div>
 
         {/* Trust badges */}
