@@ -55,6 +55,8 @@ export default function SearchForm({
   const originRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
   const paxRef = useRef<HTMLDivElement>(null);
+  const departInputRef = useRef<HTMLInputElement>(null);
+  const returnInputRef = useRef<HTMLInputElement>(null);
 
   const fetchSuggestions = useCallback(async (query: string): Promise<AirportOption[]> => {
     if (query.length < 2) return [];
@@ -133,6 +135,16 @@ export default function SearchForm({
     router.push(`/flights/${origin.toLowerCase()}-to-${destination.toLowerCase()}?${params}`);
   }
 
+  function openPicker(ref: { current: HTMLInputElement | null }) {
+    const el = ref.current;
+    if (!el) return;
+    try {
+      el.showPicker();
+    } catch {
+      el.focus();
+    }
+  }
+
   const today = new Date().toISOString().split("T")[0];
 
   const formatShortDate = (d: string) => {
@@ -175,10 +187,10 @@ export default function SearchForm({
     </div>
   );
 
-  const cellPad = compact ? "px-4 py-2.5" : "px-5 py-3.5";
-  const labelClass = "text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5";
-  const valueClass = "text-lg sm:text-xl font-bold text-slate-900 leading-7";
-  const subClass = "text-xs text-slate-400 mt-0.5 truncate";
+  const cellPad = compact ? "px-4 py-2" : "px-4 py-2.5";
+  const labelClass = "text-[10px] font-semibold text-slate-400 uppercase tracking-wider";
+  const valueClass = "text-base sm:text-lg font-bold text-slate-900 leading-6";
+  const subClass = "text-xs text-slate-400 truncate";
 
   return (
     <form onSubmit={handleSubmit}>
@@ -217,7 +229,7 @@ export default function SearchForm({
               onChange={(e) => { setOriginLabel(e.target.value); setOrigin(""); setOriginInfo(null); }}
               onFocus={() => originSuggestions.length > 0 && setShowOriginDropdown(true)}
               placeholder="City or airport"
-              className="w-full bg-transparent text-lg sm:text-xl font-bold text-slate-900 leading-7 placeholder:text-base placeholder:font-normal placeholder:text-slate-400 focus:outline-none"
+              className="w-full bg-transparent text-base sm:text-lg font-bold text-slate-900 leading-6 placeholder:text-sm placeholder:font-normal placeholder:text-slate-400 focus:outline-none"
               required
             />
             <p className={subClass}>
@@ -231,9 +243,9 @@ export default function SearchForm({
               type="button"
               onClick={swapAirports}
               aria-label="Swap airports"
-              className="absolute z-20 right-5 bottom-0 translate-y-1/2 lg:right-0 lg:bottom-auto lg:top-1/2 lg:translate-x-1/2 lg:-translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-full shadow-md hover:shadow-lg hover:rotate-180 transition-all duration-300"
+              className="absolute z-20 right-5 bottom-0 translate-y-1/2 lg:right-0 lg:bottom-auto lg:top-1/2 lg:translate-x-1/2 lg:-translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white border border-slate-200 rounded-full shadow-md hover:shadow-lg hover:rotate-180 transition-all duration-300"
             >
-              <ArrowLeftRight className="w-4 h-4 text-brand-600" />
+              <ArrowLeftRight className="w-3.5 h-3.5 text-brand-600" />
             </button>
             {showOriginDropdown && renderDropdown(originSuggestions, (a) => {
               setOrigin(a.code);
@@ -255,7 +267,7 @@ export default function SearchForm({
               onChange={(e) => { setDestLabel(e.target.value); setDestination(""); setDestInfo(null); }}
               onFocus={() => destSuggestions.length > 0 && setShowDestDropdown(true)}
               placeholder="City or airport"
-              className="w-full bg-transparent text-lg sm:text-xl font-bold text-slate-900 leading-7 placeholder:text-base placeholder:font-normal placeholder:text-slate-400 focus:outline-none"
+              className="w-full bg-transparent text-base sm:text-lg font-bold text-slate-900 leading-6 placeholder:text-sm placeholder:font-normal placeholder:text-slate-400 focus:outline-none"
               required
             />
             <p className={subClass}>
@@ -273,7 +285,10 @@ export default function SearchForm({
           </div>
 
           {/* Departure */}
-          <div className={cn("relative flex-1 hover:bg-brand-50/50 transition-colors cursor-pointer", cellPad)}>
+          <div
+            className={cn("relative flex-1 hover:bg-brand-50/50 transition-colors cursor-pointer", cellPad)}
+            onClick={() => openPicker(departInputRef)}
+          >
             <p className={labelClass}>Departure</p>
             {departDate ? (
               <>
@@ -287,17 +302,21 @@ export default function SearchForm({
               </>
             )}
             <input
+              ref={departInputRef}
               type="date"
               value={departDate}
               min={today}
               onChange={(e) => setDepartDate(e.target.value)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              className="absolute bottom-0 left-0 w-full h-1 opacity-0 pointer-events-none"
               required
             />
           </div>
 
           {/* Return */}
-          <div className={cn("relative flex-1 transition-colors", cellPad, tripType === "one-way" ? "opacity-50" : "hover:bg-brand-50/50 cursor-pointer")}>
+          <div
+            className={cn("relative flex-1 transition-colors", cellPad, tripType === "one-way" ? "opacity-50" : "hover:bg-brand-50/50 cursor-pointer")}
+            onClick={() => tripType !== "one-way" && openPicker(returnInputRef)}
+          >
             <p className={labelClass}>Return</p>
             {tripType === "one-way" ? (
               <>
@@ -317,11 +336,12 @@ export default function SearchForm({
             )}
             {tripType !== "one-way" && (
               <input
+                ref={returnInputRef}
                 type="date"
                 value={returnDate}
                 min={departDate || today}
                 onChange={(e) => setReturnDate(e.target.value)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                className="absolute bottom-0 left-0 w-full h-1 opacity-0 pointer-events-none"
               />
             )}
           </div>
@@ -374,9 +394,9 @@ export default function SearchForm({
         <button
           type="submit"
           disabled={loading}
-          className="lg:w-44 h-14 lg:h-auto rounded-2xl bg-gradient-to-br from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold text-base shadow-lg shadow-brand-600/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 shrink-0"
+          className="lg:w-36 h-12 lg:h-auto rounded-xl bg-gradient-to-br from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold text-sm shadow-lg shadow-brand-600/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 shrink-0"
         >
-          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
           {loading ? "Searching…" : "Search"}
         </button>
       </div>
