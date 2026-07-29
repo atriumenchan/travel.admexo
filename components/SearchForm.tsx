@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Plane, ArrowLeftRight, Calendar, Users, Search, MapPin, Loader2, Minus, Plus } from "lucide-react";
+import { Plane, ArrowLeftRight, Search, Loader2, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AirportOption {
@@ -39,6 +39,8 @@ export default function SearchForm({
   const [destination, setDestination] = useState(initialDestination);
   const [originLabel, setOriginLabel] = useState(initialOrigin);
   const [destLabel, setDestLabel] = useState(initialDestination);
+  const [originInfo, setOriginInfo] = useState<AirportOption | null>(null);
+  const [destInfo, setDestInfo] = useState<AirportOption | null>(null);
   const [departDate, setDepartDate] = useState(initialDepartDate);
   const [returnDate, setReturnDate] = useState(initialReturnDate);
   const [passengers, setPassengers] = useState(initialPassengers);
@@ -112,6 +114,8 @@ export default function SearchForm({
     setDestination(origin);
     setOriginLabel(destLabel);
     setDestLabel(originLabel);
+    setOriginInfo(destInfo);
+    setDestInfo(originInfo);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -131,8 +135,12 @@ export default function SearchForm({
 
   const today = new Date().toISOString().split("T")[0];
 
-  const inputClass =
-    "w-full pl-10 pr-9 h-12 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500 focus:bg-white transition-all";
+  const formatShortDate = (d: string) => {
+    const dt = new Date(`${d}T00:00:00`);
+    return `${dt.getDate()} ${dt.toLocaleString("en", { month: "short" })}'${String(dt.getFullYear()).slice(2)}`;
+  };
+  const formatWeekday = (d: string) =>
+    new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { weekday: "long" });
 
   const renderDropdown = (
     suggestions: AirportOption[],
@@ -167,16 +175,15 @@ export default function SearchForm({
     </div>
   );
 
+  const cellPad = compact ? "px-4 py-2.5" : "px-5 py-3.5";
+  const labelClass = "text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5";
+  const valueClass = "text-lg sm:text-xl font-bold text-slate-900 leading-7";
+  const subClass = "text-xs text-slate-400 mt-0.5 truncate";
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={cn(
-        "bg-white border border-slate-100 shadow-2xl shadow-brand-900/10",
-        compact ? "rounded-2xl shadow-lg p-4" : "rounded-3xl p-5 sm:p-6"
-      )}
-    >
+    <form onSubmit={handleSubmit}>
       {/* Trip type toggle */}
-      <div className="inline-flex bg-slate-100 rounded-full p-1 mb-5">
+      <div className="inline-flex bg-white/95 rounded-full p-1 mb-3 shadow-sm">
         {(["round", "one-way"] as const).map((t) => (
           <button
             key={t}
@@ -185,7 +192,7 @@ export default function SearchForm({
             className={cn(
               "px-5 py-1.5 rounded-full text-sm font-semibold transition-all",
               tripType === t
-                ? "bg-white text-brand-700 shadow-sm"
+                ? "bg-brand-600 text-white shadow-sm"
                 : "text-slate-500 hover:text-slate-700"
             )}
           >
@@ -194,154 +201,184 @@ export default function SearchForm({
         ))}
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-3">
-        {/* Origin + Destination with swap */}
-        <div className="relative flex-[2.2] grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={swapAirports}
-            className="hidden sm:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center bg-white border border-slate-200 rounded-full shadow-md hover:shadow-lg hover:rotate-180 transition-all duration-300"
-            aria-label="Swap airports"
-          >
-            <ArrowLeftRight className="w-4 h-4 text-brand-600" />
-          </button>
+      <div className="flex flex-col lg:flex-row gap-3 lg:items-stretch">
+        {/* Unified search bar */}
+        <div className="flex-1 flex flex-col lg:flex-row bg-white border border-slate-200 rounded-2xl shadow-xl shadow-brand-900/5 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
 
-          {/* Origin */}
-          <div className="relative" ref={originRef}>
-            <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">From</label>
-            <div className="relative">
-              <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-500" />
-              <input
-                type="text"
-                value={originLabel}
-                onChange={(e) => { setOriginLabel(e.target.value); setOrigin(""); }}
-                onFocus={() => originSuggestions.length > 0 && setShowOriginDropdown(true)}
-                placeholder="City or airport"
-                className={inputClass}
-                required
-              />
-              {originLoading && (
-                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />
-              )}
-            </div>
+          {/* From */}
+          <div
+            className={cn("relative flex-[1.3] hover:bg-brand-50/50 transition-colors rounded-t-2xl lg:rounded-tr-none lg:rounded-l-2xl", cellPad)}
+            ref={originRef}
+          >
+            <p className={labelClass}>From</p>
+            <input
+              type="text"
+              value={originLabel}
+              onChange={(e) => { setOriginLabel(e.target.value); setOrigin(""); setOriginInfo(null); }}
+              onFocus={() => originSuggestions.length > 0 && setShowOriginDropdown(true)}
+              placeholder="City or airport"
+              className="w-full bg-transparent text-lg sm:text-xl font-bold text-slate-900 leading-7 placeholder:text-base placeholder:font-normal placeholder:text-slate-400 focus:outline-none"
+              required
+            />
+            <p className={subClass}>
+              {originInfo ? `${originInfo.code}, ${originInfo.name}` : "Search city or airport"}
+            </p>
+            {originLoading && (
+              <Loader2 className="absolute right-4 top-4 w-4 h-4 text-slate-400 animate-spin" />
+            )}
+            {/* Swap */}
+            <button
+              type="button"
+              onClick={swapAirports}
+              aria-label="Swap airports"
+              className="absolute z-20 right-5 bottom-0 translate-y-1/2 lg:right-0 lg:bottom-auto lg:top-1/2 lg:translate-x-1/2 lg:-translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-full shadow-md hover:shadow-lg hover:rotate-180 transition-all duration-300"
+            >
+              <ArrowLeftRight className="w-4 h-4 text-brand-600" />
+            </button>
             {showOriginDropdown && renderDropdown(originSuggestions, (a) => {
               setOrigin(a.code);
-              setOriginLabel(`${a.city ?? a.name} (${a.code})`);
+              setOriginLabel(a.city ?? a.name);
+              setOriginInfo(a);
               setShowOriginDropdown(false);
             }, "left")}
           </div>
 
-          {/* Destination */}
-          <div className="relative" ref={destRef}>
-            <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">To</label>
-            <div className="relative">
-              <Plane className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-500 rotate-45" />
-              <input
-                type="text"
-                value={destLabel}
-                onChange={(e) => { setDestLabel(e.target.value); setDestination(""); }}
-                onFocus={() => destSuggestions.length > 0 && setShowDestDropdown(true)}
-                placeholder="City or airport"
-                className={inputClass}
-                required
-              />
-              {destLoading && (
-                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />
-              )}
-            </div>
+          {/* To */}
+          <div
+            className={cn("relative flex-[1.3] hover:bg-brand-50/50 transition-colors", cellPad)}
+            ref={destRef}
+          >
+            <p className={labelClass}>To</p>
+            <input
+              type="text"
+              value={destLabel}
+              onChange={(e) => { setDestLabel(e.target.value); setDestination(""); setDestInfo(null); }}
+              onFocus={() => destSuggestions.length > 0 && setShowDestDropdown(true)}
+              placeholder="City or airport"
+              className="w-full bg-transparent text-lg sm:text-xl font-bold text-slate-900 leading-7 placeholder:text-base placeholder:font-normal placeholder:text-slate-400 focus:outline-none"
+              required
+            />
+            <p className={subClass}>
+              {destInfo ? `${destInfo.code}, ${destInfo.name}` : "Search city or airport"}
+            </p>
+            {destLoading && (
+              <Loader2 className="absolute right-4 top-4 w-4 h-4 text-slate-400 animate-spin" />
+            )}
             {showDestDropdown && renderDropdown(destSuggestions, (a) => {
               setDestination(a.code);
-              setDestLabel(`${a.city ?? a.name} (${a.code})`);
+              setDestLabel(a.city ?? a.name);
+              setDestInfo(a);
               setShowDestDropdown(false);
             }, "right")}
           </div>
-        </div>
 
-        {/* Dates */}
-        <div className="flex gap-3 flex-[1.6]">
-          <div className="flex-1">
-            <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Depart</label>
-            <div className="relative">
-              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-500 pointer-events-none" />
-              <input
-                type="date"
-                value={departDate}
-                min={today}
-                onChange={(e) => setDepartDate(e.target.value)}
-                className={cn(inputClass, "pr-2")}
-                required
-              />
-            </div>
+          {/* Departure */}
+          <div className={cn("relative flex-1 hover:bg-brand-50/50 transition-colors cursor-pointer", cellPad)}>
+            <p className={labelClass}>Departure</p>
+            {departDate ? (
+              <>
+                <p className={valueClass}>{formatShortDate(departDate)}</p>
+                <p className={subClass}>{formatWeekday(departDate)}</p>
+              </>
+            ) : (
+              <>
+                <p className={cn(valueClass, "text-slate-300")}>Select</p>
+                <p className={subClass}>Add a date</p>
+              </>
+            )}
+            <input
+              type="date"
+              value={departDate}
+              min={today}
+              onChange={(e) => setDepartDate(e.target.value)}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              required
+            />
           </div>
-          <div className="flex-1">
-            <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Return</label>
-            <div className="relative">
-              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-500 pointer-events-none" />
+
+          {/* Return */}
+          <div className={cn("relative flex-1 transition-colors", cellPad, tripType === "one-way" ? "opacity-50" : "hover:bg-brand-50/50 cursor-pointer")}>
+            <p className={labelClass}>Return</p>
+            {tripType === "one-way" ? (
+              <>
+                <p className={cn(valueClass, "text-slate-300")}>—</p>
+                <p className={subClass}>One way</p>
+              </>
+            ) : returnDate ? (
+              <>
+                <p className={valueClass}>{formatShortDate(returnDate)}</p>
+                <p className={subClass}>{formatWeekday(returnDate)}</p>
+              </>
+            ) : (
+              <>
+                <p className={cn(valueClass, "text-slate-300")}>Select</p>
+                <p className="text-xs text-brand-500 mt-0.5 leading-4">Tap to add a return date for bigger discounts</p>
+              </>
+            )}
+            {tripType !== "one-way" && (
               <input
                 type="date"
                 value={returnDate}
                 min={departDate || today}
                 onChange={(e) => setReturnDate(e.target.value)}
-                disabled={tripType === "one-way"}
-                className={cn(inputClass, "pr-2", tripType === "one-way" && "opacity-40 cursor-not-allowed")}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
-            </div>
+            )}
+          </div>
+
+          {/* Travellers */}
+          <div
+            className={cn("relative flex-1 hover:bg-brand-50/50 transition-colors cursor-pointer rounded-b-2xl lg:rounded-bl-none lg:rounded-r-2xl", cellPad)}
+            ref={paxRef}
+            onClick={() => setShowPaxDropdown((v) => !v)}
+          >
+            <p className={labelClass}>Travellers</p>
+            <p className={valueClass}>{passengers}</p>
+            <p className={subClass}>{passengers === 1 ? "Adult" : "Adults"}</p>
+            {showPaxDropdown && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="absolute top-full right-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-2xl z-[999] p-4"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Adults</p>
+                    <p className="text-xs text-slate-400">Age 12+</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPassengers((p) => Math.max(1, p - 1))}
+                      disabled={passengers <= 1}
+                      className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-brand-400 hover:text-brand-600 disabled:opacity-30 transition-colors"
+                    >
+                      <Minus className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="w-7 text-center text-sm font-bold text-slate-800">{passengers}</span>
+                    <button
+                      type="button"
+                      onClick={() => setPassengers((p) => Math.min(9, p + 1))}
+                      disabled={passengers >= 9}
+                      className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-brand-400 hover:text-brand-600 disabled:opacity-30 transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Passengers */}
-        <div className="relative lg:w-40 shrink-0" ref={paxRef}>
-          <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Passengers</label>
-          <button
-            type="button"
-            onClick={() => setShowPaxDropdown((v) => !v)}
-            className={cn(inputClass, "relative pr-3 flex items-center text-left cursor-pointer")}
-          >
-            <Users className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-500" />
-            <span className="flex-1 truncate">{passengers} {passengers === 1 ? "Adult" : "Adults"}</span>
-          </button>
-          {showPaxDropdown && (
-            <div className="absolute top-full right-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-2xl z-[999] p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-slate-800">Adults</p>
-                  <p className="text-xs text-slate-400">Age 12+</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPassengers((p) => Math.max(1, p - 1))}
-                    disabled={passengers <= 1}
-                    className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-brand-400 hover:text-brand-600 disabled:opacity-30 transition-colors"
-                  >
-                    <Minus className="w-3.5 h-3.5" />
-                  </button>
-                  <span className="w-7 text-center text-sm font-bold text-slate-800">{passengers}</span>
-                  <button
-                    type="button"
-                    onClick={() => setPassengers((p) => Math.min(9, p + 1))}
-                    disabled={passengers >= 9}
-                    className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-brand-400 hover:text-brand-600 disabled:opacity-30 transition-colors"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Search button */}
-        <div className="lg:w-40 shrink-0 flex items-end">
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full h-12 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold text-sm shadow-lg shadow-brand-600/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            {loading ? "Searching…" : "Search"}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="lg:w-44 h-14 lg:h-auto rounded-2xl bg-gradient-to-br from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-bold text-base shadow-lg shadow-brand-600/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 shrink-0"
+        >
+          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+          {loading ? "Searching…" : "Search"}
+        </button>
       </div>
     </form>
   );
