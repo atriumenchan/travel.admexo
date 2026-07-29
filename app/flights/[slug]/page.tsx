@@ -6,9 +6,12 @@ import FlightCard from "@/components/FlightCard";
 import FlightCardSkeleton from "@/components/FlightCardSkeleton";
 import MonthlyCalendar from "@/components/MonthlyCalendar";
 import ResultsFilter from "@/components/ResultsFilter";
-import { searchFlights, getMonthlyPrices } from "@/lib/travelpayouts";
+import { searchFlights, getMonthlyPrices, buildAviasalesSearchLink } from "@/lib/travelpayouts";
+import { searchPricelineFlights } from "@/lib/priceline";
 import { parseSlugs } from "@/lib/utils";
-import { AlertCircle, Plane } from "lucide-react";
+import { AlertCircle, Plane, Zap } from "lucide-react";
+
+export const maxDuration = 60;
 
 interface PageProps {
   params: { slug: string };
@@ -59,21 +62,65 @@ async function FlightResults({ params, searchParams }: PageProps) {
 
   let flights: import("@/lib/travelpayouts").FlightResult[] = [];
   let error: string | null = null;
+  let isLive = false;
 
+  // 1) Try Priceline real-time search first
   try {
-    flights = await searchFlights({
+    const live = await searchPricelineFlights({
       origin,
       destination,
       departDate,
       returnDate,
-      limit: 30,
+      passengers: Number(searchParams.passengers ?? 1),
+      tripType: (searchParams.tripType as "round" | "one-way") ?? "round",
     });
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : String(e);
-    if (msg.includes("RATE_LIMIT")) {
-      error = "Too many requests. Please try again in a moment.";
-    } else {
-      error = "Unable to load flights right now. Please try again.";
+    if (live.length > 0) {
+      isLive = true;
+      flights = live.map((f) => ({
+        origin,
+        destination,
+        origin_airport: f.originAirport,
+        destination_airport: f.destinationAirport,
+        price: f.price,
+        airline: f.airlineCode,
+        flight_number: f.flightNumber,
+        departure_at: f.departureAt,
+        return_at: f.arrivalAt,
+        transfers: f.stops,
+        return_transfers: 0,
+        duration: f.durationMinutes,
+        duration_to: f.durationMinutes,
+        duration_back: 0,
+        link: buildAviasalesSearchLink(
+          origin,
+          destination,
+          departDate,
+          returnDate,
+          Number(searchParams.passengers ?? 1)
+        ),
+      }));
+    }
+  } catch {
+    // Priceline failed/timed out — fall through to Travelpayouts
+  }
+
+  // 2) Fallback: Travelpayouts cached prices
+  if (flights.length === 0) {
+    try {
+      flights = await searchFlights({
+        origin,
+        destination,
+        departDate,
+        returnDate,
+        limit: 30,
+      });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes("RATE_LIMIT")) {
+        error = "Too many requests. Please try again in a moment.";
+      } else {
+        error = "Unable to load flights right now. Please try again.";
+      }
     }
   }
 
@@ -108,6 +155,12 @@ async function FlightResults({ params, searchParams }: PageProps) {
 
   return (
     <div className="space-y-4">
+      {isLive && (
+        <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+          <Zap className="w-3.5 h-3.5" />
+          Live prices · updated in real time
+        </div>
+      )}
       <ResultsFilter resultCount={sorted.length} currentSort={sort} />
       {sorted.map((flight, idx) => (
         <FlightCard key={`${flight.airline}-${flight.departure_at}-${idx}`} flight={flight} index={idx} />

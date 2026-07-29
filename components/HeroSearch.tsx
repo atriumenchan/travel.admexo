@@ -92,8 +92,8 @@ export default function HeroSearch() {
           : "Find the cheapest month to fly for any route"}
       </p>
 
-      {/* Panel */}
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      {/* Panel — overflow-hidden only on live tab so dates-tab dropdown isn't clipped */}
+      <div className={`bg-white rounded-2xl shadow-2xl ${tab === "live" ? "overflow-hidden" : "overflow-visible"}`}>
         {/* Live widget — keep mounted so script doesn't reload */}
         <div className={tab === "live" ? "block" : "hidden"}>
           <LiveWidget />

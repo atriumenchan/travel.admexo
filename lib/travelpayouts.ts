@@ -376,6 +376,21 @@ export function getAirlineName(iata: string): string {
   return AIRLINE_NAMES[iata] ?? iata;
 }
 
+// Aviasales deep link: /search/{ORIGIN}{DDMM}{DEST}[{DDMM}]{passengers}?marker=
+export function buildAviasalesSearchLink(
+  origin: string,
+  destination: string,
+  departDate: string,
+  returnDate?: string,
+  passengers = 1
+): string {
+  const ddmm = (d: string) => `${d.slice(8, 10)}${d.slice(5, 7)}`;
+  let code = `${origin.toUpperCase()}${ddmm(departDate)}${destination.toUpperCase()}`;
+  if (returnDate) code += ddmm(returnDate);
+  code += String(passengers);
+  return `https://www.aviasales.com/search/${code}?marker=${AFFILIATE_MARKER}`;
+}
+
 export function formatDuration(minutes: number): string {
   if (!minutes) return "—";
   const h = Math.floor(minutes / 60);
