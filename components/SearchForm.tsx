@@ -331,7 +331,7 @@ export default function SearchForm({
             ) : (
               <>
                 <p className={cn(valueClass, "text-slate-300")}>Select</p>
-                <p className="text-xs text-brand-500 mt-0.5 leading-4">Tap to add a return date for bigger discounts</p>
+                <p className={subClass}>Add a date</p>
               </>
             )}
             {tripType !== "one-way" && (
