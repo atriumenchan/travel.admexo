@@ -136,9 +136,15 @@ export default function SearchForm({
 
   const renderDropdown = (
     suggestions: AirportOption[],
-    onSelect: (a: AirportOption) => void
+    onSelect: (a: AirportOption) => void,
+    align: "left" | "right" = "left"
   ) => (
-    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl z-[999] max-h-72 overflow-y-auto overflow-x-hidden">
+    <div
+      className={cn(
+        "absolute top-full mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl z-[999] max-h-80 overflow-y-auto overflow-x-hidden w-full sm:w-[340px]",
+        align === "right" ? "right-0" : "left-0"
+      )}
+    >
       {suggestions.map((a) => (
         <button
           key={a.code}
@@ -222,7 +228,7 @@ export default function SearchForm({
               setOrigin(a.code);
               setOriginLabel(`${a.city ?? a.name} (${a.code})`);
               setShowOriginDropdown(false);
-            })}
+            }, "left")}
           </div>
 
           {/* Destination */}
@@ -247,7 +253,7 @@ export default function SearchForm({
               setDestination(a.code);
               setDestLabel(`${a.city ?? a.name} (${a.code})`);
               setShowDestDropdown(false);
-            })}
+            }, "right")}
           </div>
         </div>
 

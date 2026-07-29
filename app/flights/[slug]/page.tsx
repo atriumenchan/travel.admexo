@@ -83,6 +83,7 @@ async function FlightResults({ params, searchParams }: PageProps) {
         destination_airport: f.destinationAirport,
         price: f.price,
         airline: f.airlineCode,
+        airline_name: f.airlineName,
         flight_number: f.flightNumber,
         departure_at: f.departureAt,
         return_at: f.arrivalAt,

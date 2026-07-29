@@ -1,5 +1,6 @@
 import { ExternalLink, Clock, ArrowRight, Minus } from "lucide-react";
 import { FlightResult, getAirlineName, formatDuration } from "@/lib/travelpayouts";
+import AirlineLogo from "@/components/AirlineLogo";
 import { formatPrice, formatTime, formatDate } from "@/lib/utils";
 
 interface FlightCardProps {
@@ -29,11 +30,11 @@ export default function FlightCard({ flight, index }: FlightCardProps) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         {/* Airline */}
         <div className="flex items-center gap-3 w-full sm:w-40 shrink-0">
-          <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">
-            {flight.airline}
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-800 leading-tight">{getAirlineName(flight.airline)}</p>
+          <AirlineLogo code={flight.airline} />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-slate-800 leading-tight truncate">
+              {flight.airline_name ?? getAirlineName(flight.airline)}
+            </p>
             <p className="text-xs text-slate-400">{flight.airline}{flight.flight_number}</p>
           </div>
         </div>

@@ -23,6 +23,7 @@ export interface FlightResult {
   destination_airport: string;
   price: number;
   airline: string;
+  airline_name?: string;
   flight_number: string;
   departure_at: string;
   return_at: string | null;
@@ -370,6 +371,19 @@ export const AIRLINE_NAMES: Record<string, string> = {
   IB: "Iberia", LA: "LATAM Airlines", AV: "Avianca",
   TK: "Turkish Airlines", SU: "Aeroflot", FR: "Ryanair",
   U2: "easyJet", W6: "Wizz Air", VY: "Vueling",
+  VS: "Virgin Atlantic", B6: "JetBlue", WN: "Southwest Airlines",
+  NK: "Spirit Airlines", F9: "Frontier Airlines", AS: "Alaska Airlines",
+  AC: "Air Canada", AM: "Aeromexico", NZ: "Air New Zealand",
+  VA: "Virgin Australia", AZ: "ITA Airways", SN: "Brussels Airlines",
+  OS: "Austrian Airlines", EI: "Aer Lingus", AY: "Finnair",
+  TP: "TAP Air Portugal", LX: "Swiss", ET: "Ethiopian Airlines",
+  SV: "Saudia", GF: "Gulf Air", WY: "Oman Air", UL: "SriLankan Airlines",
+  MH: "Malaysia Airlines", VN: "Vietnam Airlines", PR: "Philippine Airlines",
+  KE: "Korean Air", OZ: "Asiana Airlines", CA: "Air China",
+  MU: "China Eastern", CZ: "China Southern", MS: "Egyptair",
+  AI: "Air India", "6E": "IndiGo", UK: "Vistara", QP: "Akasa Air",
+  IX: "Air India Express", SG: "SpiceJet", I5: "AirAsia India",
+  G8: "Go First", S5: "Star Air", "9I": "Alliance Air",
 };
 
 export function getAirlineName(iata: string): string {
