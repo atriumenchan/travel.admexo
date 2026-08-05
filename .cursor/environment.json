@@ -1,0 +1,11 @@
+{
+  "name": "SkyDeal (Next.js flight metasearch)",
+  "install": "npm ci",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "npm run dev"
+    }
+  ],
+  "ports": [3000]
+}
