@@ -33,6 +33,7 @@ export interface FlightResult {
   duration_to: number;
   duration_back: number;
   link: string;
+  source?: string; // provider id when this result came from the live aggregator
 }
 
 export interface CheapestTicket {

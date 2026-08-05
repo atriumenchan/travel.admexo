@@ -6,8 +6,8 @@ import FlightCard from "@/components/FlightCard";
 import FlightCardSkeleton from "@/components/FlightCardSkeleton";
 import MonthlyCalendar from "@/components/MonthlyCalendar";
 import ResultsFilter from "@/components/ResultsFilter";
-import { searchFlights, getMonthlyPrices, buildAviasalesSearchLink } from "@/lib/travelpayouts";
-import { searchPricelineFlights } from "@/lib/priceline";
+import { searchFlights, getMonthlyPrices } from "@/lib/travelpayouts";
+import { searchAllProviders, type ProviderStatus } from "@/lib/aggregator";
 import { parseSlugs } from "@/lib/utils";
 import { AlertCircle, Plane, Zap } from "lucide-react";
 
@@ -63,10 +63,12 @@ async function FlightResults({ params, searchParams }: PageProps) {
   let flights: import("@/lib/travelpayouts").FlightResult[] = [];
   let error: string | null = null;
   let isLive = false;
+  let sources: ProviderStatus[] = [];
 
-  // 1) Try Priceline real-time search first
+  // 1) Fan out to every configured live provider (Priceline, Google Flights
+  // via SerpApi, ...) in parallel and merge/de-duplicate their results.
   try {
-    const live = await searchPricelineFlights({
+    const aggregated = await searchAllProviders({
       origin,
       destination,
       departDate,
@@ -74,35 +76,13 @@ async function FlightResults({ params, searchParams }: PageProps) {
       passengers: Number(searchParams.passengers ?? 1),
       tripType: (searchParams.tripType as "round" | "one-way") ?? "round",
     });
-    if (live.length > 0) {
+    sources = aggregated.sources;
+    if (aggregated.flights.length > 0) {
       isLive = true;
-      flights = live.map((f) => ({
-        origin,
-        destination,
-        origin_airport: f.originAirport,
-        destination_airport: f.destinationAirport,
-        price: f.price,
-        airline: f.airlineCode,
-        airline_name: f.airlineName,
-        flight_number: f.flightNumber,
-        departure_at: f.departureAt,
-        return_at: f.arrivalAt,
-        transfers: f.stops,
-        return_transfers: 0,
-        duration: f.durationMinutes,
-        duration_to: f.durationMinutes,
-        duration_back: 0,
-        link: buildAviasalesSearchLink(
-          origin,
-          destination,
-          departDate,
-          returnDate,
-          Number(searchParams.passengers ?? 1)
-        ),
-      }));
+      flights = aggregated.flights;
     }
   } catch {
-    // Priceline failed/timed out — fall through to Travelpayouts
+    // All providers failed/timed out — fall through to Travelpayouts
   }
 
   // 2) Fallback: Travelpayouts cached prices
@@ -154,12 +134,19 @@ async function FlightResults({ params, searchParams }: PageProps) {
     return a.price - b.price;
   });
 
+  const liveSources = sources.filter((s) => s.ok && s.count > 0);
+
   return (
     <div className="space-y-4">
       {isLive && (
         <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
           <Zap className="w-3.5 h-3.5" />
           Live prices · updated in real time
+          {liveSources.length > 0 && (
+            <span className="text-slate-400 font-normal">
+              · combined from {liveSources.map((s) => s.label).join(", ")}
+            </span>
+          )}
         </div>
       )}
       <ResultsFilter resultCount={sorted.length} currentSort={sort} />

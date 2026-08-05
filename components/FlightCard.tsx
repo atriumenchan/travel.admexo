@@ -17,13 +17,26 @@ export default function FlightCard({ flight, index }: FlightCardProps) {
       ? "1 stop"
       : `${flight.transfers} stops`;
 
+  const sourceLabels: Record<string, string> = {
+    priceline: "Priceline",
+    "google-flights": "Google Flights",
+  };
+  const sourceLabel = flight.source ? sourceLabels[flight.source] ?? flight.source : null;
+
   return (
     <div className={`bg-white rounded-xl border ${isBest ? "border-brand-400 shadow-md" : "border-slate-200 shadow-sm"} p-4 sm:p-5 hover:shadow-md transition-shadow`}>
-      {isBest && (
-        <div className="mb-3">
-          <span className="bg-brand-100 text-brand-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-            Best value
-          </span>
+      {(isBest || sourceLabel) && (
+        <div className="mb-3 flex items-center gap-2">
+          {isBest && (
+            <span className="bg-brand-100 text-brand-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+              Best value
+            </span>
+          )}
+          {sourceLabel && (
+            <span className="bg-slate-100 text-slate-500 text-xs font-medium px-2 py-0.5 rounded-full">
+              via {sourceLabel}
+            </span>
+          )}
         </div>
       )}
 
