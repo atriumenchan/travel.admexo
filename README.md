@@ -1,6 +1,6 @@
 # SkyDeal — Flight Metasearch Affiliate Site
 
-A Skyscanner-style flight metasearch engine built with **Next.js 14 App Router**, **TypeScript**, and **Tailwind CSS**. Powered by the Travelpayouts API.
+A Skyscanner-style flight metasearch engine built with **Next.js 14 App Router**, **TypeScript**, and **Tailwind CSS**. Live prices are aggregated in parallel from multiple flight-search APIs (Priceline via RapidAPI, Google Flights via SerpApi), with Travelpayouts as the cached fallback.
 
 > All bookings are completed on airline or OTA websites via affiliate deep links. No payment processing on-site.
 
@@ -44,6 +44,12 @@ Edit `.env.local`:
 ```
 TRAVELPAYOUTS_TOKEN=your_api_token_here
 TRAVELPAYOUTS_MARKER=your_affiliate_marker_here
+
+# Optional live providers — the site works without these (falls back to
+# Travelpayouts cached prices), but each one you add increases result
+# coverage. Comma-separate multiple keys per provider to pool quota.
+RAPIDAPI_KEY_PRICELINE=your_rapidapi_key_here
+SERPAPI_KEY=your_serpapi_key_here
 ```
 
 ### 4. Run locally
@@ -78,9 +84,31 @@ flights/
 │   ├── Navbar.tsx              # Top navigation
 │   └── Footer.tsx              # Site footer
 └── lib/
-    ├── travelpayouts.ts        # Typed API client — all Travelpayouts calls
-    └── utils.ts                # formatPrice, formatDate, cn(), slugify helpers
+    ├── keyPool.ts               # Multi-key round-robin pool w/ rate-limit fallback
+    ├── aggregator.ts            # Fans out to all providers in parallel, dedupes & merges
+    ├── providers/
+    │   ├── types.ts             # Shared FlightProvider / NormalizedFlight contract
+    │   ├── priceline.ts         # Priceline (RapidAPI) provider
+    │   └── serpapi.ts           # Google Flights (SerpApi) provider
+    ├── travelpayouts.ts         # Typed API client — cached fallback + affiliate links
+    └── utils.ts                 # formatPrice, formatDate, cn(), slugify helpers
 ```
+
+---
+
+## Multi-Provider Live Search
+
+`lib/aggregator.ts` is the single entry point the results page calls. On every search it:
+
+1. Filters `PROVIDERS` down to the ones with at least one API key configured (`isConfigured()`).
+2. Calls all of them **in parallel** via `Promise.allSettled`, each with its own timeout, so one slow/broken provider never blocks the others.
+3. Normalizes every result into a common shape, then **de-duplicates** flights that appear in more than one source (same airline + flight number + departure time — cheapest price wins).
+4. Returns the merged, deduped list plus a per-provider status report (used for the "Live prices · combined from Priceline, Google Flights" banner and for debugging failures).
+5. If every live provider fails or returns nothing, the page falls back to Travelpayouts' cached prices so users still see results.
+
+**Adding a new provider:** implement the `FlightProvider` interface (`lib/providers/types.ts`) in a new file under `lib/providers/`, then add it to the `PROVIDERS` array in `lib/aggregator.ts`. Use `KeyPool` (`lib/keyPool.ts`) for API keys so multiple keys for that provider are automatically pooled and rotated.
+
+**Multiple keys per provider:** set the env var to a comma-separated list (e.g. `RAPIDAPI_KEY_PRICELINE=key1,key2,key3`). Requests round-robin across the keys; if one gets rate-limited (HTTP 429), it's put on a short cooldown and the next key is used automatically — no code changes needed, just add more keys.
 
 ---
 
