@@ -161,6 +161,8 @@ const MAJOR_HUBS = new Set([
   "TUN", "ALG", "DKR", "OGG", "HNL", "SAN", "TPA", "STL", "BNA", "AUS",
   "PDX", "SLC", "SAT", "MSY", "RDU", "PIT", "CLE", "IND", "CVG", "MCI",
   "IAD", "DCA", "BWI", "SJC", "OAK", "BUR", "SNA", "ONT",
+  "ORY", "STN", "LCY", "BER", "MXP", "DUS", "PRG", "BUD", "WAW", "OTP",
+  "KEF", "YYC", "YEG", "NGO", "FUK", "CTS", "PUS", "SZX", "CTU", "XIY",
 ]);
 
 function airportSizeTier(a: Airport): number {
