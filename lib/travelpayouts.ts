@@ -14,6 +14,8 @@ export interface Airport {
   country_code: string;
   city?: string;   // enriched from cities.json
   country?: string; // enriched from cities.json
+  iata_type?: string;  // "airport" | "heliport" | "railway" | "harbour" | ...
+  flightable?: boolean; // false for entries with no bookable flights (ferries, helipads, etc.)
 }
 
 export interface FlightResult {
@@ -133,6 +135,42 @@ async function loadCountryMap(): Promise<Map<string, string>> {
   return countryNameMap;
 }
 
+// ---------------------------------------------------------------------------
+// Airport "busyness" ranking — Travelpayouts' airport list has no traffic
+// data, so multi-airport cities (New York, London, Tokyo...) return every
+// heliport/ferry/railway entry alongside the real airports with no way to
+// tell them apart. We curate the biggest global hubs into size tiers here
+// (higher = busier) so results are sorted busiest-first instead of in
+// whatever order the raw dataset happens to list them.
+// ---------------------------------------------------------------------------
+
+const MEGA_HUBS = new Set([
+  "ATL", "DXB", "DFW", "HND", "ORD", "LHR", "IST", "PVG", "CAN", "JFK",
+  "LAX", "CDG", "AMS", "PEK", "DEL", "DEN", "LAS", "CLT", "MIA", "MCO",
+  "PHX", "IAH", "SFO", "SEA", "EWR", "FRA", "MAD", "BCN", "MUC", "FCO",
+  "HKG", "SIN", "BOM", "ICN", "BKK", "KUL", "SYD", "MEL", "GRU", "MEX",
+  "YYZ", "JNB", "DOH", "AUH", "RUH", "JED",
+]);
+
+const MAJOR_HUBS = new Set([
+  "LGA", "BOS", "MSP", "DTW", "PHL", "LGW", "MAN", "DUB", "ZRH", "VIE",
+  "CPH", "OSL", "ARN", "HEL", "BRU", "LIS", "ATH", "SVO", "DME", "GIG",
+  "GRU", "EZE", "SCL", "LIM", "BOG", "PTY", "CUN", "YVR", "YUL", "PER",
+  "BNE", "AKL", "NRT", "KIX", "TPE", "MNL", "CGK", "SGN", "HAN", "KTM",
+  "DAC", "CMB", "AMM", "BEY", "CAI", "ADD", "NBO", "LOS", "ACC", "CMN",
+  "TUN", "ALG", "DKR", "OGG", "HNL", "SAN", "TPA", "STL", "BNA", "AUS",
+  "PDX", "SLC", "SAT", "MSY", "RDU", "PIT", "CLE", "IND", "CVG", "MCI",
+  "IAD", "DCA", "BWI", "SJC", "OAK", "BUR", "SNA", "ONT",
+]);
+
+function airportSizeTier(a: Airport): number {
+  const code = a.code.toUpperCase();
+  if (MEGA_HUBS.has(code)) return 3;
+  if (MAJOR_HUBS.has(code)) return 2;
+  if (/international/i.test(a.name ?? "")) return 1;
+  return 0;
+}
+
 export async function searchAirports(query: string): Promise<Airport[]> {
   const [cities, countries] = await Promise.all([loadCityMap(), loadCountryMap()]);
 
@@ -155,7 +193,7 @@ export async function searchAirports(query: string): Promise<Airport[]> {
   const q = query.toLowerCase().trim();
   if (!q) return [];
 
-  const score = (a: Airport): number => {
+  const matchScore = (a: Airport): number => {
     const code = a.code.toLowerCase();
     const city = (a.city ?? "").toLowerCase();
     const cityCode = a.city_code.toLowerCase();
@@ -171,13 +209,24 @@ export async function searchAirports(query: string): Promise<Airport[]> {
   return airportCache
     .filter(
       (a) =>
-        a.code?.toLowerCase().includes(q) ||
-        a.city_code?.toLowerCase().includes(q) ||
-        (a.city ?? "").toLowerCase().includes(q) ||
-        a.name?.toLowerCase().includes(q)
+        // Only real, bookable airports — excludes heliports, ferries,
+        // railway stations, and bus stations that show up in the raw
+        // dataset for multi-modal city codes (e.g. NYC, LON).
+        a.iata_type === "airport" &&
+        a.flightable !== false &&
+        (a.code?.toLowerCase().includes(q) ||
+          a.city_code?.toLowerCase().includes(q) ||
+          (a.city ?? "").toLowerCase().includes(q) ||
+          a.name?.toLowerCase().includes(q))
     )
-    .sort((a, b) => score(b) - score(a))
-    .slice(0, 8);
+    .sort((a, b) => {
+      const matchDiff = matchScore(b) - matchScore(a);
+      if (matchDiff !== 0) return matchDiff;
+      const tierDiff = airportSizeTier(b) - airportSizeTier(a);
+      if (tierDiff !== 0) return tierDiff;
+      return a.name.localeCompare(b.name);
+    })
+    .slice(0, 10);
 }
 
 // ---------------------------------------------------------------------------
