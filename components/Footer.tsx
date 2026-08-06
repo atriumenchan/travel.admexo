@@ -29,11 +29,14 @@ export default function Footer() {
 
           <div>
             <h3 className="text-white font-semibold mb-3 text-sm">Popular Routes</h3>
+            {/* Plain <a>, not next/link — see PopularRoutes.tsx for why:
+                these need a real page load for the embedded widget to
+                pick up the flightSearch param. */}
             <ul className="space-y-2 text-sm">
-              <li><Link href={buildWidgetSearchPath("JFK", "LHR")} className="hover:text-white transition-colors">New York → London</Link></li>
-              <li><Link href={buildWidgetSearchPath("LAX", "NRT")} className="hover:text-white transition-colors">Los Angeles → Tokyo</Link></li>
-              <li><Link href={buildWidgetSearchPath("JFK", "CDG")} className="hover:text-white transition-colors">New York → Paris</Link></li>
-              <li><Link href={buildWidgetSearchPath("LHR", "DXB")} className="hover:text-white transition-colors">London → Dubai</Link></li>
+              <li><a href={buildWidgetSearchPath("JFK", "LHR")} className="hover:text-white transition-colors">New York → London</a></li>
+              <li><a href={buildWidgetSearchPath("LAX", "NRT")} className="hover:text-white transition-colors">Los Angeles → Tokyo</a></li>
+              <li><a href={buildWidgetSearchPath("JFK", "CDG")} className="hover:text-white transition-colors">New York → Paris</a></li>
+              <li><a href={buildWidgetSearchPath("LHR", "DXB")} className="hover:text-white transition-colors">London → Dubai</a></li>
             </ul>
           </div>
         </div>

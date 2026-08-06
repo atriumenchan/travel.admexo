@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ExternalLink, ArrowRight } from "lucide-react";
 import { PopularRoute, POPULAR_DESTINATIONS, FALLBACK_POPULAR_ROUTES, getAirlineName, buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { formatPrice } from "@/lib/utils";
@@ -56,13 +55,17 @@ export default function PopularRoutes({ routes }: PopularRoutesProps) {
                   <p className="text-white/60 text-xs">{getAirlineName(route.airline)}</p>
                 </div>
                 <div className="flex gap-2">
-                  <Link
+                  {/* Plain <a>, not next/link — this stays on "/" but with a
+                      different query string, and the embedded Travelpayouts
+                      widget only reads that param on a fresh page load, not
+                      on Next's soft client-side navigation. */}
+                  <a
                     href={buildWidgetSearchPath(route.origin || "JFK", route.destination, route.departure_at)}
                     className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition-colors"
                     title="View flights"
                   >
                     <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  </a>
                   <a
                     href={route.link}
                     target="_blank"
