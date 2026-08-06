@@ -57,9 +57,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         {/* Frames the widget against the gradient background with a soft
             glass panel so it reads as an intentional, designed part of the
-            page rather than plain fields floating on the blue. */}
-        <div className="relative z-20 w-full max-w-5xl mx-auto">
-          <div className="rounded-3xl bg-white/10 backdrop-blur-sm p-2 sm:p-3">
+            page rather than plain fields floating on the blue.
+            max-w-7xl (not 5xl) matters here — the widget picks its own
+            horizontal vs. stacked layout based on how much width it's
+            actually given, and 5xl was narrow enough to trigger its
+            mobile/stacked layout even on wide desktop screens. */}
+        <div className="relative z-20 w-full max-w-7xl mx-auto">
+          <div className="rounded-3xl bg-white/10 backdrop-blur-sm p-1.5 sm:p-2">
             <TravelpayoutsWidget hasSearch={hasSearch} />
           </div>
         </div>
