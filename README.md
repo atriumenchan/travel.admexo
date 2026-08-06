@@ -50,6 +50,10 @@ TRAVELPAYOUTS_MARKER=your_affiliate_marker_here
 # coverage. Comma-separate multiple keys per provider to pool quota.
 RAPIDAPI_KEY_PRICELINE=your_rapidapi_key_here
 SERPAPI_KEY=your_serpapi_key_here
+
+# Optional — only needed if this API is on a different RapidAPI account
+# than Priceline. Defaults to reusing RAPIDAPI_KEY_PRICELINE otherwise.
+RAPIDAPI_KEY_GOOGLE_FLIGHTS2=your_rapidapi_key_here
 ```
 
 ### 4. Run locally
@@ -89,7 +93,8 @@ flights/
     ├── providers/
     │   ├── types.ts             # Shared FlightProvider / NormalizedFlight contract
     │   ├── priceline.ts         # Priceline (RapidAPI) provider
-    │   └── serpapi.ts           # Google Flights (SerpApi) provider
+    │   ├── serpapi.ts           # Google Flights (SerpApi) provider
+    │   └── googleFlights2.ts    # Google Flights (RapidAPI "google-flights2") provider
     ├── travelpayouts.ts         # Typed API client — cached fallback + affiliate links
     └── utils.ts                 # formatPrice, formatDate, cn(), slugify helpers
 ```
@@ -109,6 +114,8 @@ flights/
 **Adding a new provider:** implement the `FlightProvider` interface (`lib/providers/types.ts`) in a new file under `lib/providers/`, then add it to the `PROVIDERS` array in `lib/aggregator.ts`. Use `KeyPool` (`lib/keyPool.ts`) for API keys so multiple keys for that provider are automatically pooled and rotated.
 
 **Multiple keys per provider:** set the env var to a comma-separated list (e.g. `RAPIDAPI_KEY_PRICELINE=key1,key2,key3`). Requests round-robin across the keys; if one gets rate-limited (HTTP 429), it's put on a short cooldown and the next key is used automatically — no code changes needed, just add more keys.
+
+**Latency budget:** each provider has its own short internal timeout (6-10s) with minimal retries, and the aggregator caps every provider at 13s no matter how many are configured — so total search time stays bounded even as more providers are added, instead of growing with each new one. Repeat searches (same origin/destination/date/passengers/tripType, e.g. from sorting or navigating back) are served from a 3-minute in-memory cache in `lib/aggregator.ts` and return in well under 100ms.
 
 ---
 
