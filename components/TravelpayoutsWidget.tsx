@@ -1,77 +1,4 @@
-"use client";
-
-import { useEffect } from "react";
-import Script from "next/script";
-
-// ---------------------------------------------------------------------------
-// Hide the widget's own "Powered by Travelpayouts" badge.
-//
-// The widget renders into an *open* shadow root (confirmed via devtools:
-// document.querySelector('#tpwl-search').shadowRoot is accessible), so we
-// can safely reach in and hide it — this doesn't touch anything Travelpayouts
-// itself serves, it just adjusts presentation in our own page. Travelpayouts
-// also exposes an official "Powered by" toggle in the White Label dashboard
-// (Content/Design tab) which is the more durable place to control this long
-// term; this is a client-side belt-and-suspenders fix in the meantime.
-//
-// The widget's internal class names are auto-generated/hashed (e.g.
-// "TripClassList-module__root__4xZiP") and can change on their next release,
-// so instead of hardcoding a selector we walk the shadow DOM for whichever
-// element's text says "powered by" and hide its smallest self-contained
-// container. A MutationObserver keeps re-checking as the widget re-renders
-// (e.g. after a search), since the badge can be removed and re-added.
-// ---------------------------------------------------------------------------
-
-function hidePoweredByBadge(root: ParentNode) {
-  const candidates = Array.from(root.querySelectorAll<HTMLElement>("*"));
-  for (const el of candidates) {
-    if (el.children.length > 0) continue; // only consider leaf nodes
-    const text = (el.textContent ?? "").trim().toLowerCase();
-    if (!text || !/powered\s*by/.test(text)) continue;
-    if (el.dataset.tpwlHidden === "1") continue;
-
-    let target: HTMLElement = el;
-    for (let i = 0; i < 3; i++) {
-      const parent = target.parentElement;
-      if (!parent) break;
-      const parentText = (parent.textContent ?? "").trim().toLowerCase().replace(/\s+/g, " ");
-      if (parentText === text.replace(/\s+/g, " ")) target = parent;
-      else break;
-    }
-    target.style.display = "none";
-    el.dataset.tpwlHidden = "1";
-  }
-}
-
-function watchForShadowRoot(hostId: string) {
-  let stopped = false;
-  let observer: MutationObserver | null = null;
-
-  const attach = (host: Element) => {
-    if (!host.shadowRoot || observer) return;
-    hidePoweredByBadge(host.shadowRoot);
-    observer = new MutationObserver(() => hidePoweredByBadge(host.shadowRoot!));
-    observer.observe(host.shadowRoot, { childList: true, subtree: true });
-  };
-
-  let attempts = 0;
-  const poll = setInterval(() => {
-    if (stopped) return clearInterval(poll);
-    const host = document.getElementById(hostId);
-    if (host?.shadowRoot) {
-      attach(host);
-      clearInterval(poll);
-    } else if (++attempts > 60) {
-      clearInterval(poll); // give up after ~30s — widget likely didn't load
-    }
-  }, 500);
-
-  return () => {
-    stopped = true;
-    clearInterval(poll);
-    observer?.disconnect();
-  };
-}
+import TravelpayoutsWidgetBadgeHider from "./TravelpayoutsWidgetBadgeHider";
 
 // Travelpayouts White Label metasearch widget. This is a fully self-contained
 // third-party widget: the loader script renders its own search form into
@@ -84,12 +11,19 @@ function watchForShadowRoot(hostId: string) {
 // switching back later is just a matter of swapping this component back out.
 const WL_ID = "20607";
 
-// The snippet Travelpayouts provides tags its <script> with a handful of
-// non-standard attributes that tell WordPress caching/optimization plugins
-// (WP Rocket, Autoptimize, WP Fastest Cache, Seraph Accelerator) to leave it
-// alone. They're no-ops here since this isn't WordPress, but kept for
-// fidelity with the snippet they gave us. next/script's types don't know
-// about them, hence the cast.
+// This is a plain, server-rendered <script> tag on purpose — NOT next/script
+// with strategy="afterInteractive". That was the cause of the ~2s delay
+// before the widget appeared: afterInteractive only starts loading the
+// script *after* React finishes hydrating the page. A script tag emitted
+// directly in the server-rendered HTML gets discovered and starts fetching
+// the instant the browser parses this point in the document, well before
+// hydration completes.
+//
+// The custom attributes below tell WordPress caching/optimization plugins
+// (WP Rocket, Autoptimize, WP Fastest Cache, Seraph Accelerator) to leave
+// this script alone. They're no-ops here since this isn't WordPress, but
+// kept for fidelity with the snippet Travelpayouts provided. JSX's built-in
+// typing for <script> doesn't know about them, hence the cast.
 const WP_PLUGIN_NOOP_ATTRS = {
   nowprocket: "1",
   "data-noptimize": "1",
@@ -99,36 +33,49 @@ const WP_PLUGIN_NOOP_ATTRS = {
   "data-no-defer": "1",
 } as Record<string, string>;
 
-export default function TravelpayoutsWidget() {
-  useEffect(() => {
-    const stopSearch = watchForShadowRoot("tpwl-search");
-    const stopTickets = watchForShadowRoot("tpwl-tickets");
-    return () => {
-      stopSearch();
-      stopTickets();
-    };
-  }, []);
+interface TravelpayoutsWidgetProps {
+  /** True when the page loaded with a `flightSearch` param — shows a
+   * results-shaped skeleton instead of an empty container while the
+   * widget loads and fetches real results. */
+  hasSearch?: boolean;
+}
 
+export default function TravelpayoutsWidget({ hasSearch = false }: TravelpayoutsWidgetProps) {
   return (
     <>
-      <Script
-        id="tpwl-loader"
-        strategy="afterInteractive"
+      <script
+        async
+        type="module"
+        src={`https://tpwdgt.com/wl_web/main.js?wl_id=${WL_ID}`}
         {...WP_PLUGIN_NOOP_ATTRS}
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function () {
-              var script = document.createElement("script");
-              script.async = 1;
-              script.type = "module";
-              script.src = "https://tpwdgt.com/wl_web/main.js?wl_id=${WL_ID}";
-              document.head.appendChild(script);
-            })();
-          `,
-        }}
       />
-      <div id="tpwl-search" />
-      <div id="tpwl-tickets" />
+
+      {/* Skeleton search bar — visible instantly on first paint. The moment
+          the widget's script calls attachShadow() on this element, the
+          browser stops rendering this light-DOM content in favor of the
+          widget's shadow tree, so this disappears on its own with no JS
+          needed on our end. */}
+      <div id="tpwl-search">
+        <div className="animate-pulse bg-white rounded-2xl shadow-xl shadow-brand-900/10 p-3 flex flex-col sm:flex-row gap-3">
+          <div className="flex-[1.3] h-14 bg-slate-100 rounded-xl" />
+          <div className="flex-[1.3] h-14 bg-slate-100 rounded-xl" />
+          <div className="flex-1 h-14 bg-slate-100 rounded-xl" />
+          <div className="flex-1 h-14 bg-slate-100 rounded-xl" />
+          <div className="sm:w-36 h-14 bg-brand-200 rounded-xl" />
+        </div>
+      </div>
+
+      <div id="tpwl-tickets">
+        {hasSearch && (
+          <div className="mt-6 space-y-4 max-w-4xl mx-auto">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-5 animate-pulse h-24" />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <TravelpayoutsWidgetBadgeHider />
     </>
   );
 }
