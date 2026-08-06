@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SearchForm from "@/components/SearchForm";
+import TravelpayoutsWidget from "@/components/TravelpayoutsWidget";
 import PopularRoutes from "@/components/PopularRoutes";
 import HowItWorks from "@/components/HowItWorks";
 import { getPopularRoutes } from "@/lib/travelpayouts";
@@ -36,7 +36,7 @@ export default async function HomePage() {
         </div>
 
         <div className="relative z-20 w-full max-w-6xl mx-auto">
-          <SearchForm />
+          <TravelpayoutsWidget />
         </div>
 
         {/* Trust badges */}
