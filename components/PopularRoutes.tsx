@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ExternalLink, ArrowRight } from "lucide-react";
-import { PopularRoute, POPULAR_DESTINATIONS, FALLBACK_POPULAR_ROUTES, getAirlineName } from "@/lib/travelpayouts";
+import { PopularRoute, POPULAR_DESTINATIONS, FALLBACK_POPULAR_ROUTES, getAirlineName, buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { formatPrice } from "@/lib/utils";
 
 interface PopularRoutesProps {
@@ -57,7 +57,7 @@ export default function PopularRoutes({ routes }: PopularRoutesProps) {
                 </div>
                 <div className="flex gap-2">
                   <Link
-                    href={`/flights/jfk-to-${route.destination.toLowerCase()}?origin=JFK&destination=${route.destination}`}
+                    href={buildWidgetSearchPath(route.origin || "JFK", route.destination, route.departure_at)}
                     className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition-colors"
                     title="View flights"
                   >

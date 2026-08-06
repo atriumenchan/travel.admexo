@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Plane } from "lucide-react";
+import { buildWidgetSearchPath } from "@/lib/travelpayouts";
 
 export default function Footer() {
   return (
@@ -29,10 +30,10 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-3 text-sm">Popular Routes</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/flights/jfk-to-lhr" className="hover:text-white transition-colors">New York → London</Link></li>
-              <li><Link href="/flights/lax-to-nrt" className="hover:text-white transition-colors">Los Angeles → Tokyo</Link></li>
-              <li><Link href="/flights/jfk-to-cdg" className="hover:text-white transition-colors">New York → Paris</Link></li>
-              <li><Link href="/flights/lhr-to-dxb" className="hover:text-white transition-colors">London → Dubai</Link></li>
+              <li><Link href={buildWidgetSearchPath("JFK", "LHR")} className="hover:text-white transition-colors">New York → London</Link></li>
+              <li><Link href={buildWidgetSearchPath("LAX", "NRT")} className="hover:text-white transition-colors">Los Angeles → Tokyo</Link></li>
+              <li><Link href={buildWidgetSearchPath("JFK", "CDG")} className="hover:text-white transition-colors">New York → Paris</Link></li>
+              <li><Link href={buildWidgetSearchPath("LHR", "DXB")} className="hover:text-white transition-colors">London → Dubai</Link></li>
             </ul>
           </div>
         </div>

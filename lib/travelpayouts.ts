@@ -442,6 +442,23 @@ export function getAirlineName(iata: string): string {
   return AIRLINE_NAMES[iata] ?? iata;
 }
 
+function ddmm(d: string): string {
+  return `${d.slice(8, 10)}${d.slice(5, 7)}`;
+}
+
+function searchCode(origin: string, destination: string, departDate: string, returnDate: string | undefined, passengers: number): string {
+  let code = `${origin.toUpperCase()}${ddmm(departDate)}${destination.toUpperCase()}`;
+  if (returnDate) code += ddmm(returnDate);
+  code += String(passengers);
+  return code;
+}
+
+function defaultFutureDate(daysFromNow = 30): string {
+  const d = new Date();
+  d.setDate(d.getDate() + daysFromNow);
+  return d.toISOString().slice(0, 10);
+}
+
 // Aviasales deep link: /search/{ORIGIN}{DDMM}{DEST}[{DDMM}]{passengers}?marker=
 export function buildAviasalesSearchLink(
   origin: string,
@@ -450,11 +467,22 @@ export function buildAviasalesSearchLink(
   returnDate?: string,
   passengers = 1
 ): string {
-  const ddmm = (d: string) => `${d.slice(8, 10)}${d.slice(5, 7)}`;
-  let code = `${origin.toUpperCase()}${ddmm(departDate)}${destination.toUpperCase()}`;
-  if (returnDate) code += ddmm(returnDate);
-  code += String(passengers);
-  return `https://www.aviasales.com/search/${code}?marker=${AFFILIATE_MARKER}`;
+  return `https://www.aviasales.com/search/${searchCode(origin, destination, departDate, returnDate, passengers)}?marker=${AFFILIATE_MARKER}`;
+}
+
+// Deep link into the Travelpayouts White Label widget embedded on our own
+// homepage (see components/TravelpayoutsWidget.tsx) — same ORIGIN+DDMM+DEST
+// code format as the Aviasales link above, just as a `flightSearch` query
+// param on our own domain instead of an external aviasales.com URL. Landing
+// on "/" with this param pre-fills the widget and auto-runs the search.
+export function buildWidgetSearchPath(
+  origin: string,
+  destination: string,
+  departDate?: string,
+  passengers = 1
+): string {
+  const depart = departDate && departDate.length >= 10 ? departDate : defaultFutureDate();
+  return `/?flightSearch=${searchCode(origin, destination, depart, undefined, passengers)}`;
 }
 
 export function formatDuration(minutes: number): string {
