@@ -17,12 +17,12 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-hero-gradient min-h-[520px] flex flex-col items-center justify-center px-4 py-16 sm:py-24 relative">
+      <section className="bg-hero-gradient flex flex-col items-center justify-center gap-10 px-4 py-14 sm:py-20 relative">
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
           <div className="absolute top-10 left-10 w-40 h-40 rounded-full bg-white/30 blur-3xl" />
           <div className="absolute bottom-10 right-10 w-60 h-60 rounded-full bg-white/20 blur-3xl" />
         </div>
-        <div className="relative z-10 text-center mb-8">
+        <div className="relative z-10 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Plane className="w-8 h-8 text-blue-200" />
             <span className="text-blue-200 font-semibold text-sm uppercase tracking-widest">Flight Metasearch</span>
@@ -35,12 +35,12 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="relative z-20 w-full max-w-6xl mx-auto">
+        <div className="relative z-20 w-full max-w-5xl mx-auto">
           <TravelpayoutsWidget />
         </div>
 
         {/* Trust badges */}
-        <div className="relative z-10 flex flex-wrap items-center justify-center gap-6 mt-8 text-blue-200 text-sm">
+        <div className="relative z-10 flex flex-wrap items-center justify-center gap-6 text-blue-200 text-sm">
           <span className="flex items-center gap-1.5"><Shield className="w-4 h-4" /> No booking fees</span>
           <span className="flex items-center gap-1.5"><TrendingDown className="w-4 h-4" /> Lowest prices guaranteed</span>
           <span className="flex items-center gap-1.5"><Plane className="w-4 h-4" /> 700+ airlines compared</span>
