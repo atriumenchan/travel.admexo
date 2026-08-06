@@ -1,15 +1,26 @@
 import { buildAviasalesSearchLink, type FlightResult } from "@/lib/travelpayouts";
 import { pricelineProvider } from "@/lib/providers/priceline";
 import { serpApiProvider } from "@/lib/providers/serpapi";
+import { googleFlights2Provider } from "@/lib/providers/googleFlights2";
 import type { FlightProvider, NormalizedFlight, ProviderSearchParams } from "@/lib/providers/types";
 
 // Add more providers here as new API keys/subscriptions are wired in.
-const PROVIDERS: FlightProvider[] = [pricelineProvider, serpApiProvider];
+// Providers run fully in parallel, so adding more never adds latency —
+// each one is individually capped by PROVIDER_TIMEOUT_MS below.
+const PROVIDERS: FlightProvider[] = [pricelineProvider, serpApiProvider, googleFlights2Provider];
 
-// Generous enough for a provider's own internal retry/backoff loop (e.g.
-// Priceline's flaky upstream scraper) to actually finish, while still
-// leaving headroom under the page's overall maxDuration.
-const PROVIDER_TIMEOUT_MS = 35_000;
+// Hard ceiling per provider. Every provider is expected to resolve well
+// under this on its own (see each provider's internal timeout/retry
+// budget) — this is just the backstop so one misbehaving provider can
+// never drag the whole search past a predictable worst case.
+const PROVIDER_TIMEOUT_MS = 13_000;
+
+// Short-lived cache for the *merged* result of an exact search (same
+// origin/destination/date/passengers/tripType). Repeat searches — sort
+// changes, back/forward navigation, another user searching the same
+// popular route — return instantly instead of re-querying every provider.
+const RESULT_CACHE_TTL_MS = 3 * 60 * 1000;
+const resultCache = new Map<string, { at: number; result: AggregatedSearchResult }>();
 
 export interface ProviderStatus {
   id: string;
@@ -48,6 +59,10 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
  * gracefully degrade when some providers fail or aren't configured).
  */
 export async function searchAllProviders(params: ProviderSearchParams): Promise<AggregatedSearchResult> {
+  const cacheKey = JSON.stringify(params);
+  const cached = resultCache.get(cacheKey);
+  if (cached && Date.now() - cached.at < RESULT_CACHE_TTL_MS) return cached.result;
+
   const active = PROVIDERS.filter((p) => p.isConfigured());
   const sources: ProviderStatus[] = [];
 
@@ -104,5 +119,9 @@ export async function searchAllProviders(params: ProviderSearchParams): Promise<
     source: f.source,
   }));
 
-  return { flights, sources };
+  const result: AggregatedSearchResult = { flights, sources };
+  // Only cache genuine results — don't cache a total wipeout so a
+  // transient all-providers-failed blip doesn't stick around for 3 minutes.
+  if (flights.length > 0) resultCache.set(cacheKey, { at: Date.now(), result });
+  return result;
 }

@@ -20,6 +20,7 @@ export default function FlightCard({ flight, index }: FlightCardProps) {
   const sourceLabels: Record<string, string> = {
     priceline: "Priceline",
     "google-flights": "Google Flights",
+    "google-flights2": "Google Flights",
   };
   const sourceLabel = flight.source ? sourceLabels[flight.source] ?? flight.source : null;
 
