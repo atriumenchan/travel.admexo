@@ -102,7 +102,7 @@ async function search(params: ProviderSearchParams): Promise<NormalizedFlight[]>
     url.searchParams.set("api_key", key);
 
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 20000);
+    const timer = setTimeout(() => controller.abort(), 10000);
     try {
       const res = await fetch(url.toString(), { method: "GET", cache: "no-store", signal: controller.signal });
       if (res.status === 429) throw new RateLimitError(`SerpApi: rate limited on key ending ...${key.slice(-4)}`);

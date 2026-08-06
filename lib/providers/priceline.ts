@@ -63,7 +63,7 @@ class UpstreamRetryableError extends Error {}
 
 async function requestOnce(url: string, key: string): Promise<PricelineSearchResponse> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 9000);
+  const timer = setTimeout(() => controller.abort(), 6000);
   try {
     const res = await fetch(url, {
       method: "GET",
@@ -91,7 +91,12 @@ async function requestOnce(url: string, key: string): Promise<PricelineSearchRes
   }
 }
 
-async function fetchWithRetry(url: string, attempts = 3): Promise<PricelineSearchResponse> {
+// Only 2 attempts with a short, fixed backoff — Priceline's upstream
+// scraper is flaky often enough that a longer retry budget just makes
+// every search feel slow without meaningfully improving the success rate.
+// Other providers (Google Flights, SerpApi) pick up the slack in parallel
+// when this one comes up empty.
+async function fetchWithRetry(url: string, attempts = 2): Promise<PricelineSearchResponse> {
   let lastError: unknown = null;
 
   for (let i = 0; i < attempts; i++) {
@@ -99,10 +104,7 @@ async function fetchWithRetry(url: string, attempts = 3): Promise<PricelineSearc
       return await keyPool.withRotation((key) => requestOnce(url, key));
     } catch (e) {
       lastError = e;
-      if (i < attempts - 1) {
-        const backoff = e instanceof UpstreamRetryableError ? 1200 * (i + 1) : 800 * (i + 1);
-        await sleep(backoff);
-      }
+      if (i < attempts - 1) await sleep(700);
     }
   }
 
