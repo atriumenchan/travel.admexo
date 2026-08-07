@@ -3,22 +3,27 @@
 import { useEffect } from "react";
 
 // ---------------------------------------------------------------------------
-// Hide the widget's own "Powered by Travelpayouts" badge.
+// Hide a few bits of the widget's own UI we don't want: the "Powered by
+// Travelpayouts" badge, and the "Show hotels" toggle (this site is
+// flights-only, so that checkbox has no page for it to link to).
 //
 // The widget renders into an *open* shadow root (confirmed via devtools:
 // document.querySelector('#tpwl-search').shadowRoot is accessible), so we
-// can safely reach in and hide it — this doesn't touch anything Travelpayouts
-// itself serves, it just adjusts presentation in our own page. Travelpayouts
-// also exposes an official "Powered by" toggle in the White Label dashboard
-// (Content/Design tab) which is the more durable place to control this long
-// term; this is a client-side belt-and-suspenders fix in the meantime.
+// can safely reach in and hide these — this doesn't touch anything
+// Travelpayouts itself serves, it just adjusts presentation in our own page.
+// Travelpayouts also exposes official toggles for some of this in the White
+// Label dashboard (Content/Design tab), which is the more durable place to
+// control it long term; this is a client-side belt-and-suspenders fix.
 //
 // The widget's internal class names are auto-generated/hashed (e.g.
 // "TripClassList-module__root__4xZiP") and can change on their next release,
-// so instead of hardcoding a selector we walk the shadow DOM for whichever
-// element's text says "powered by" and hide its smallest self-contained
-// container. A MutationObserver keeps re-checking as the widget re-renders
-// (e.g. after a search), since the badge can be removed and re-added.
+// so instead of hardcoding selectors we walk the shadow DOM for whichever
+// element's text matches one of these patterns and hide its smallest
+// self-contained container (walking up while the parent's only text is the
+// same match — this naturally also captures a sibling checkbox input, which
+// has no text of its own). A MutationObserver keeps re-checking as the
+// widget re-renders (e.g. after a search), since these can be removed and
+// re-added.
 //
 // Split into its own client component (separate from TravelpayoutsWidget,
 // which is a server component) so hydrating this small bit of JS never
@@ -26,12 +31,14 @@ import { useEffect } from "react";
 // instant the page's HTML is parsed, not after React hydrates.
 // ---------------------------------------------------------------------------
 
-function hidePoweredByBadge(root: ParentNode) {
+const HIDE_PATTERNS = [/powered\s*by/i, /show\s*hotels/i];
+
+function hideMatchingElements(root: ParentNode) {
   const candidates = Array.from(root.querySelectorAll<HTMLElement>("*"));
   for (const el of candidates) {
     if (el.children.length > 0) continue; // only consider leaf nodes
     const text = (el.textContent ?? "").trim().toLowerCase();
-    if (!text || !/powered\s*by/.test(text)) continue;
+    if (!text || !HIDE_PATTERNS.some((p) => p.test(text))) continue;
     if (el.dataset.tpwlHidden === "1") continue;
 
     let target: HTMLElement = el;
@@ -53,8 +60,8 @@ function watchForShadowRoot(hostId: string) {
 
   const attach = (host: Element) => {
     if (!host.shadowRoot || observer) return;
-    hidePoweredByBadge(host.shadowRoot);
-    observer = new MutationObserver(() => hidePoweredByBadge(host.shadowRoot!));
+    hideMatchingElements(host.shadowRoot);
+    observer = new MutationObserver(() => hideMatchingElements(host.shadowRoot!));
     observer.observe(host.shadowRoot, { childList: true, subtree: true });
   };
 
