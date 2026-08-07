@@ -4,8 +4,9 @@ import { useEffect } from "react";
 
 // ---------------------------------------------------------------------------
 // Hide a few bits of the widget's own UI we don't want: the "Powered by
-// Travelpayouts" badge, and the "Show hotels" toggle (this site is
-// flights-only, so that checkbox has no page for it to link to).
+// Travelpayouts" badge, the "Show hotels" toggle, and the "Create
+// multi-city route" link (this site only supports simple origin/destination
+// search, so these controls have no page for them to link to).
 //
 // The widget renders into an *open* shadow root (confirmed via devtools:
 // document.querySelector('#tpwl-search').shadowRoot is accessible), so we
@@ -31,7 +32,7 @@ import { useEffect } from "react";
 // instant the page's HTML is parsed, not after React hydrates.
 // ---------------------------------------------------------------------------
 
-const HIDE_PATTERNS = [/powered\s*by/i, /show\s*hotels/i];
+const HIDE_PATTERNS = [/powered\s*by/i, /show\s*hotels/i, /multi-?\s*city/i];
 
 function hideMatchingElements(root: ParentNode) {
   const candidates = Array.from(root.querySelectorAll<HTMLElement>("*"));
