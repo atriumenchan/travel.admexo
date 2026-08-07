@@ -2,28 +2,54 @@
 
 import Link from "next/link";
 import { Plane, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const links = [
+    { href: "/", label: "Flights" },
+    { href: "/#deals", label: "Deals" },
+    { href: "/#popular", label: "Destinations" },
+    { href: "/#how-it-works", label: "How it works" },
+  ];
 
   return (
-    <nav className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+    <nav
+      className={cn(
+        "sticky top-0 z-50 transition-all duration-300",
+        scrolled ? "glass-light shadow-sm" : "bg-transparent"
+      )}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2 text-brand-700 font-bold text-xl">
-            <Plane className="w-6 h-6" />
+          <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight text-slate-900">
+            <span className="w-8 h-8 rounded-xl bg-brand-gradient flex items-center justify-center shadow-md shadow-brand-600/30">
+              <Plane className="w-4 h-4 text-white" />
+            </span>
             <span>SkyDeal</span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
-            <Link href="/" className="hover:text-brand-600 transition-colors">Flights</Link>
-            <Link href="/#popular" className="hover:text-brand-600 transition-colors">Destinations</Link>
-            <Link href="/#how-it-works" className="hover:text-brand-600 transition-colors">How it works</Link>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+            {links.map((l) => (
+              <Link key={l.href} href={l.href} className="relative group py-1">
+                {l.label}
+                <span className="absolute left-0 -bottom-0.5 h-[1.5px] w-0 bg-brand-600 transition-all duration-300 group-hover:w-full" />
+              </Link>
+            ))}
           </div>
 
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-slate-100"
+            className="md:hidden p-2 rounded-xl hover:bg-slate-100"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
@@ -33,10 +59,17 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2">
-          <Link href="/" className="block py-2 text-sm font-medium text-slate-700" onClick={() => setOpen(false)}>Flights</Link>
-          <Link href="/#popular" className="block py-2 text-sm font-medium text-slate-700" onClick={() => setOpen(false)}>Destinations</Link>
-          <Link href="/#how-it-works" className="block py-2 text-sm font-medium text-slate-700" onClick={() => setOpen(false)}>How it works</Link>
+        <div className="md:hidden glass-light border-t border-slate-200/60 px-4 py-3 space-y-1">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="block py-2.5 text-sm font-medium text-slate-700"
+              onClick={() => setOpen(false)}
+            >
+              {l.label}
+            </Link>
+          ))}
         </div>
       )}
     </nav>

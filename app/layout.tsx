@@ -5,7 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: {
@@ -43,7 +43,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.variable} font-sans`}>
         <Navbar />
         <main className="min-h-screen">{children}</main>
         <Footer />

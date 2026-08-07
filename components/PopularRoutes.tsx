@@ -1,84 +1,112 @@
-import { ExternalLink, ArrowRight } from "lucide-react";
+"use client";
+
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { ExternalLink, ArrowUpRight, Thermometer, Clock, TrendingDown } from "lucide-react";
 import { PopularRoute, POPULAR_DESTINATIONS, FALLBACK_POPULAR_ROUTES, getAirlineName, buildWidgetSearchPath } from "@/lib/travelpayouts";
+import { DESTINATION_DETAILS } from "@/lib/mockContent";
 import { formatPrice } from "@/lib/utils";
 
 interface PopularRoutesProps {
   routes: PopularRoute[];
 }
 
-const DEST_COLORS: Record<string, string> = {
-  london: "from-blue-600 to-blue-800",
-  paris: "from-pink-500 to-rose-700",
-  dubai: "from-amber-500 to-orange-700",
-  tokyo: "from-red-500 to-rose-700",
-  singapore: "from-emerald-500 to-teal-700",
-  barcelona: "from-yellow-500 to-orange-600",
-  bangkok: "from-purple-500 to-indigo-700",
-  sydney: "from-cyan-500 to-blue-700",
-  "são paulo": "from-green-500 to-emerald-700",
-};
-
-function getGradient(city: string): string {
-  return DEST_COLORS[city.toLowerCase()] ?? "from-slate-600 to-slate-800";
-}
-
 export default function PopularRoutes({ routes }: PopularRoutesProps) {
   const displayRoutes = routes.length > 0 ? routes : FALLBACK_POPULAR_ROUTES;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {displayRoutes.slice(0, 9).map((route) => {
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {displayRoutes.slice(0, 9).map((route, idx) => {
         const dest = POPULAR_DESTINATIONS.find((d) => d.code === route.destination);
+        const detail = DESTINATION_DETAILS[route.destination];
         const city = dest?.city ?? route.destination;
         const country = dest?.country ?? "";
         const emoji = dest?.emoji ?? "✈️";
-        const gradient = getGradient(city);
 
         return (
-          <div key={route.destination} className="group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-lg transition-shadow">
-            <div className={`bg-gradient-to-br ${gradient} aspect-[3/2] flex flex-col justify-between p-5`}>
-              <div className="flex items-start justify-between">
-                <div>
-                  <span className="text-3xl">{emoji}</span>
-                  <p className="text-white font-bold text-xl mt-1">{city}</p>
-                  <p className="text-white/70 text-sm">{country}</p>
-                </div>
-                <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded-full">
-                  {route.transfers === 0 ? "Nonstop" : `${route.transfers} stop`}
+          <motion.div
+            key={route.destination}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: (idx % 3) * 0.08 }}
+            className="group relative overflow-hidden rounded-[24px] shadow-card hover:shadow-card-hover transition-shadow duration-500"
+          >
+            <div className="relative aspect-[4/5] sm:aspect-[3/4]">
+              {detail && (
+                <Image
+                  src={detail.image}
+                  alt={city}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+              )}
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/0" />
+              <div className="absolute inset-0 bg-gradient-to-br from-brand-600/0 via-transparent to-accent-500/0 group-hover:from-brand-600/15 group-hover:to-accent-500/15 transition-colors duration-500" />
+
+              {/* Top row: flag + airport code + savings */}
+              <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
+                <span className="glass text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                  <span className="text-base leading-none">{emoji}</span>
+                  {route.destination}
                 </span>
+                {detail && (
+                  <span className="bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-lg shadow-emerald-900/30">
+                    <TrendingDown className="w-3 h-3" />
+                    {detail.savingsPercent}% off
+                  </span>
+                )}
               </div>
 
-              <div className="flex items-end justify-between">
-                <div>
-                  <p className="text-white/70 text-xs mb-0.5">From New York</p>
-                  <p className="text-white font-bold text-2xl">{formatPrice(route.price)}</p>
-                  <p className="text-white/60 text-xs">{getAirlineName(route.airline)}</p>
-                </div>
-                <div className="flex gap-2">
-                  {/* Plain <a>, not next/link — this stays on "/" but with a
-                      different query string, and the embedded Travelpayouts
-                      widget only reads that param on a fresh page load, not
-                      on Next's soft client-side navigation. */}
-                  <a
-                    href={buildWidgetSearchPath(route.origin || "JFK", route.destination, route.departure_at)}
-                    className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition-colors"
-                    title="View flights"
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                  <a
-                    href={route.link}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    className="bg-white text-slate-800 hover:bg-slate-100 p-2 rounded-lg transition-colors"
-                    title="Book now"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
+              {/* Bottom content */}
+              <div className="absolute inset-x-0 bottom-0 p-5">
+                <p className="text-white font-bold text-2xl leading-tight">{city}</p>
+                <p className="text-white/60 text-xs mb-3">{country}</p>
+
+                {detail && (
+                  <div className="flex items-center gap-3 text-white/80 text-xs mb-4">
+                    <span className="flex items-center gap-1">
+                      <Thermometer className="w-3.5 h-3.5" /> {detail.tempC}°C
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" /> {detail.duration}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-white/50 text-[11px] mb-0.5">From New York · {getAirlineName(route.airline)}</p>
+                    <p className="text-white font-bold text-3xl tracking-tight">{formatPrice(route.price)}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    {/* Plain <a>, not next/link — this stays on "/" but with a
+                        different query string, and the embedded Travelpayouts
+                        widget only reads that param on a fresh page load, not
+                        on Next's soft client-side navigation. */}
+                    <a
+                      href={buildWidgetSearchPath(route.origin || "JFK", route.destination, route.departure_at)}
+                      className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white flex items-center justify-center transition-all hover:scale-105"
+                      title="View flights"
+                    >
+                      <ArrowUpRight className="w-4 h-4" />
+                    </a>
+                    <a
+                      href={route.link}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      className="w-10 h-10 rounded-full bg-white hover:bg-slate-100 text-slate-900 flex items-center justify-center transition-all hover:scale-105 shadow-lg"
+                      title="Book now"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         );
       })}
     </div>

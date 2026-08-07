@@ -56,12 +56,12 @@ export default function TravelpayoutsWidget({ hasSearch = false }: Travelpayouts
           widget's shadow tree, so this disappears on its own with no JS
           needed on our end. */}
       <div id="tpwl-search">
-        <div className="animate-pulse bg-white rounded-2xl shadow-xl shadow-brand-900/10 p-3 flex flex-col sm:flex-row gap-3">
-          <div className="flex-[1.3] h-14 bg-slate-100 rounded-xl" />
-          <div className="flex-[1.3] h-14 bg-slate-100 rounded-xl" />
-          <div className="flex-1 h-14 bg-slate-100 rounded-xl" />
-          <div className="flex-1 h-14 bg-slate-100 rounded-xl" />
-          <div className="sm:w-36 h-14 bg-brand-200 rounded-xl" />
+        <div className="animate-pulse bg-white rounded-[24px] shadow-xl shadow-brand-900/10 p-3 flex flex-col sm:flex-row gap-3">
+          <div className="flex-[1.3] h-14 bg-slate-100 rounded-2xl" />
+          <div className="flex-[1.3] h-14 bg-slate-100 rounded-2xl" />
+          <div className="flex-1 h-14 bg-slate-100 rounded-2xl" />
+          <div className="flex-1 h-14 bg-slate-100 rounded-2xl" />
+          <div className="sm:w-36 h-14 bg-brand-200 rounded-2xl" />
         </div>
       </div>
 
@@ -69,7 +69,7 @@ export default function TravelpayoutsWidget({ hasSearch = false }: Travelpayouts
         {hasSearch && (
           <div className="mt-6 space-y-4 max-w-4xl mx-auto">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-5 animate-pulse h-24" />
+              <div key={i} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 animate-pulse h-24" />
             ))}
           </div>
         )}
