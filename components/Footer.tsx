@@ -37,7 +37,7 @@ const COLUMNS = [
     title: "Support & Legal",
     links: [
       { label: "Help Center", href: "#" },
-      { label: "Contact Us", href: "#" },
+      { label: "Contact Us", href: "/contact" },
       { label: "Privacy Policy", href: "#" },
       { label: "Terms of Service", href: "#" },
     ],
