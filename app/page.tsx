@@ -12,9 +12,9 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getPopularRoutes } from "@/lib/travelpayouts";
 
 export const metadata: Metadata = {
-  title: "SkyDeal — Find the Best Flights, Not Just the Cheapest",
+  title: "Skylerb — Find the Best Flights, Not Just the Cheapest",
   description:
-    "Search and compare flights from hundreds of airlines. Find the best deals on cheap flights worldwide with SkyDeal.",
+    "Search and compare flights from hundreds of airlines. Find the best deals on cheap flights worldwide with Skylerb.",
 };
 
 interface HomePageProps {
@@ -52,7 +52,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
           <section id="how-it-works" className="py-20 px-4 bg-white">
             <div className="max-w-5xl mx-auto">
-              <SectionHeading eyebrow="Simple By Design" title="How SkyDeal works" description="We find it. You book it. Simple." />
+              <SectionHeading eyebrow="Simple By Design" title="How Skylerb works" description="We find it. You book it. Simple." />
               <HowItWorks />
             </div>
           </section>

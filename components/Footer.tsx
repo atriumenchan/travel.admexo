@@ -97,7 +97,7 @@ export default function Footer() {
               <span className="w-8 h-8 rounded-xl bg-brand-gradient flex items-center justify-center">
                 <Plane className="w-4 h-4 text-white" />
               </span>
-              SkyDeal
+              Skylerb
             </Link>
             <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
               A flight metasearch engine comparing prices from hundreds of airlines and booking sites.
@@ -142,13 +142,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} SkyDeal. Prices are subject to change. Affiliate links may earn a commission.</p>
-          <p>
-            Powered by{" "}
-            <a href="https://www.travelpayouts.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-              Travelpayouts
-            </a>
-          </p>
+          <p>© {new Date().getFullYear()} Skylerb. Prices are subject to change. Affiliate links may earn a commission.</p>
         </div>
       </div>
     </footer>

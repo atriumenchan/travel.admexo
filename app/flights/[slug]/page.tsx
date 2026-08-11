@@ -32,8 +32,8 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   const { origin, destination } = parsed;
   const depart = searchParams.departDate ?? "";
   return {
-    title: `Flights from ${origin} to ${destination}${depart ? ` on ${depart}` : ""} — SkyDeal`,
-    description: `Find the cheapest flights from ${origin} to ${destination}. Compare prices from hundreds of airlines and book the best deal on SkyDeal.`,
+    title: `Flights from ${origin} to ${destination}${depart ? ` on ${depart}` : ""} — Skylerb`,
+    description: `Find the cheapest flights from ${origin} to ${destination}. Compare prices from hundreds of airlines and book the best deal on Skylerb.`,
     openGraph: {
       title: `Cheap Flights: ${origin} → ${destination}`,
       description: `Compare and book cheap flights from ${origin} to ${destination}.`,

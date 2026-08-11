@@ -9,21 +9,21 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: {
-    default: "SkyDeal — Find the Cheapest Flights",
-    template: "%s | SkyDeal",
+    default: "Skylerb — Find the Cheapest Flights",
+    template: "%s | Skylerb",
   },
   description:
-    "Compare flights from hundreds of airlines and booking sites to find the cheapest prices. SkyDeal is your metasearch engine for affordable air travel.",
+    "Compare flights from hundreds of airlines and booking sites to find the cheapest prices. Skylerb is your metasearch engine for affordable air travel.",
   keywords: ["cheap flights", "flight search", "airline tickets", "flight deals", "compare flights"],
   openGraph: {
     type: "website",
-    siteName: "SkyDeal",
-    title: "SkyDeal — Find the Cheapest Flights",
+    siteName: "Skylerb",
+    title: "Skylerb — Find the Cheapest Flights",
     description: "Compare flights from hundreds of airlines and booking sites.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "SkyDeal — Find the Cheapest Flights",
+    title: "Skylerb — Find the Cheapest Flights",
     description: "Compare flights from hundreds of airlines and booking sites.",
   },
   robots: { index: true, follow: true },

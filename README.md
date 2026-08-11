@@ -1,4 +1,4 @@
-# SkyDeal — Flight Metasearch Affiliate Site
+# Skylerb — Flight Metasearch Affiliate Site
 
 A Skyscanner-style flight metasearch engine built with **Next.js 14 App Router**, **TypeScript**, and **Tailwind CSS**. Live prices are aggregated in parallel from multiple flight-search APIs (Priceline via RapidAPI, Google Flights via SerpApi), with Travelpayouts as the cached fallback.
 
@@ -155,4 +155,4 @@ flights/
 
 ## Affiliate Disclosure
 
-SkyDeal earns a commission when users book via links on this site. All prices are provided by Travelpayouts and may not reflect the final booking price.
+Skylerb earns a commission when users book via links on this site. All prices are provided by Travelpayouts and may not reflect the final booking price.

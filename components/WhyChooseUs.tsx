@@ -11,7 +11,7 @@ export default function WhyChooseUs() {
   return (
     <section className="py-20 px-4 max-w-7xl mx-auto">
       <SectionHeading
-        eyebrow="Why SkyDeal"
+        eyebrow="Why Skylerb"
         title="Built for people who fly often"
         description="Every detail is designed around getting you the right flight, not just any flight."
       />
