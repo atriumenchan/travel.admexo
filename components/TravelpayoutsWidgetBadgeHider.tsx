@@ -3,36 +3,71 @@
 import { useEffect } from "react";
 
 // ---------------------------------------------------------------------------
-// Hide a few bits of the widget's own UI we don't want: the "Powered by
-// Travelpayouts" badge, the "Show hotels" toggle, and the "Create
-// multi-city route" link (this site only supports simple origin/destination
-// search, so these controls have no page for them to link to).
+// Client-side tweaks for the Travelpayouts White Label widget (open shadow
+// DOM). We intentionally avoid hardcoding full hashed class names — those
+// change across Travelpayouts releases — and instead match stable prefixes
+// like "DefaultSearch-module__mergedInputs".
 //
-// The widget renders into an *open* shadow root (confirmed via devtools:
-// document.querySelector('#tpwl-search').shadowRoot is accessible), so we
-// can safely reach in and hide these — this doesn't touch anything
-// Travelpayouts itself serves, it just adjusts presentation in our own page.
-// Travelpayouts also exposes official toggles for some of this in the White
-// Label dashboard (Content/Design tab), which is the more durable place to
-// control it long term; this is a client-side belt-and-suspenders fix.
-//
-// The widget's internal class names are auto-generated/hashed (e.g.
-// "TripClassList-module__root__4xZiP") and can change on their next release,
-// so instead of hardcoding selectors we walk the shadow DOM for whichever
-// element's text matches one of these patterns and hide its smallest
-// self-contained container (walking up while the parent's only text is the
-// same match — this naturally also captures a sibling checkbox input, which
-// has no text of its own). A MutationObserver keeps re-checking as the
-// widget re-renders (e.g. after a search), since these can be removed and
-// re-added.
-//
-// Split into its own client component (separate from TravelpayoutsWidget,
-// which is a server component) so hydrating this small bit of JS never
-// delays the actual widget <script> tag, which needs to start loading the
-// instant the page's HTML is parsed, not after React hydrates.
+// 1) Hide UI we don't want: "Powered by", "Show hotels", "Create multi-city".
+// 2) Fix cramped airport fields: the default single-row layout assigns each
+//    origin/destination input a ~9.6rem min-width below 1440px, which clips
+//    names like "New York, United States" / "Los Angeles" behind ellipsis.
+//    We give the airport pair a full-width first row so both cities (and
+//    their IATA codes) stay readable, with dates / passengers / search on
+//    the second row.
 // ---------------------------------------------------------------------------
 
 const HIDE_PATTERNS = [/powered\s*by/i, /show\s*hotels/i, /multi-?\s*city/i];
+
+const SEARCH_LAYOUT_CSS = `
+  /* Full-width airport pair on its own row so city names aren't truncated */
+  [class*="DefaultSearch-module__root"] {
+    flex-wrap: wrap !important;
+    align-items: stretch !important;
+  }
+
+  [class*="DefaultSearch-module__mergedInputs"] {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  [class*="DefaultSearch-module__mergedInputs"] [class*="Input-module__root"] {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Prefer clipping over aggressive ellipsis once we have enough width;
+     with a full-width row, common city names fit without truncation. */
+  [class*="DefaultSearch-module__mergedInputs"] [class*="Input-module__input"] {
+    text-overflow: ellipsis !important;
+  }
+
+  /* Second row: dates + passengers share space; search stays compact */
+  [class*="DefaultSearch-module__flex1"] {
+    flex: 1 1 11rem !important;
+    min-width: 10rem !important;
+    max-width: 100% !important;
+  }
+
+  [class*="DefaultSearch-module__submitBtn"],
+  [class*="DefaultSearch-module__submitBtn"] button {
+    flex: 1 1 10rem !important;
+    min-width: 10rem !important;
+    max-width: 100% !important;
+  }
+
+  /* Multi-city variant (if shown): same priority for the places block */
+  [class*="MultiRouteSearch-module__places"],
+  [class*="MultiRouteSearch-module__mergedInputs"] {
+    min-width: 0 !important;
+  }
+  [class*="MultiRouteSearch-module__mergedInputs"] [class*="Input-module__root"] {
+    min-width: 0 !important;
+  }
+`;
 
 function hideMatchingElements(root: ParentNode) {
   const candidates = Array.from(root.querySelectorAll<HTMLElement>("*"));
@@ -55,14 +90,26 @@ function hideMatchingElements(root: ParentNode) {
   }
 }
 
-function watchForShadowRoot(hostId: string) {
+function injectSearchLayoutStyles(shadowRoot: ShadowRoot) {
+  if (shadowRoot.querySelector("style[data-skylerb-search-layout]")) return;
+  const style = document.createElement("style");
+  style.dataset.skylerbSearchLayout = "1";
+  style.textContent = SEARCH_LAYOUT_CSS;
+  shadowRoot.appendChild(style);
+}
+
+function watchForShadowRoot(hostId: string, options: { injectLayout?: boolean } = {}) {
   let stopped = false;
   let observer: MutationObserver | null = null;
 
   const attach = (host: Element) => {
     if (!host.shadowRoot || observer) return;
+    if (options.injectLayout) injectSearchLayoutStyles(host.shadowRoot);
     hideMatchingElements(host.shadowRoot);
-    observer = new MutationObserver(() => hideMatchingElements(host.shadowRoot!));
+    observer = new MutationObserver(() => {
+      if (options.injectLayout) injectSearchLayoutStyles(host.shadowRoot!);
+      hideMatchingElements(host.shadowRoot!);
+    });
     observer.observe(host.shadowRoot, { childList: true, subtree: true });
   };
 
@@ -87,7 +134,7 @@ function watchForShadowRoot(hostId: string) {
 
 export default function TravelpayoutsWidgetBadgeHider() {
   useEffect(() => {
-    const stopSearch = watchForShadowRoot("tpwl-search");
+    const stopSearch = watchForShadowRoot("tpwl-search", { injectLayout: true });
     const stopTickets = watchForShadowRoot("tpwl-tickets");
     return () => {
       stopSearch();

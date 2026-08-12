@@ -56,12 +56,13 @@ export default function TravelpayoutsWidget({ hasSearch = false }: Travelpayouts
           widget's shadow tree, so this disappears on its own with no JS
           needed on our end. */}
       <div id="tpwl-search">
-        <div className="animate-pulse bg-white rounded-[24px] shadow-xl shadow-brand-900/10 p-3 flex flex-col sm:flex-row gap-3">
-          <div className="flex-[1.3] h-14 bg-slate-100 rounded-2xl" />
-          <div className="flex-[1.3] h-14 bg-slate-100 rounded-2xl" />
-          <div className="flex-1 h-14 bg-slate-100 rounded-2xl" />
-          <div className="flex-1 h-14 bg-slate-100 rounded-2xl" />
-          <div className="sm:w-36 h-14 bg-brand-200 rounded-2xl" />
+        <div className="animate-pulse bg-transparent rounded-[24px] p-0.5 flex flex-col gap-2">
+          <div className="h-14 bg-white/90 rounded-2xl shadow-sm" />
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex-1 h-14 bg-white/90 rounded-2xl shadow-sm" />
+            <div className="flex-1 h-14 bg-white/90 rounded-2xl shadow-sm" />
+            <div className="sm:w-40 h-14 bg-brand-200/90 rounded-2xl shadow-sm" />
+          </div>
         </div>
       </div>
 
