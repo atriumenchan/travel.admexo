@@ -104,19 +104,16 @@ export default function Hero({ hasSearch }: HeroProps) {
           </motion.div>
         )}
 
-        {/* Search widget frame — slightly wider than the rest of the page so
-            the Travelpayouts form has enough room for full airport names. */}
+        {/* Search + results. The search bar itself is width-capped inside
+            TravelpayoutsWidget so it doesn't stretch edge-to-edge on large
+            screens; ticket results can still use the full content width. */}
         <motion.div
           initial={{ opacity: 0, y: 24, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.7, delay: hasSearch ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-[90rem] relative"
+          className="w-full max-w-7xl relative"
         >
-          <div className="rounded-[28px] p-[1.5px] bg-gradient-to-br from-white/40 via-white/10 to-accent-300/30 shadow-glow">
-            <div className="rounded-[27px] glass p-1 sm:p-1.5">
-              <TravelpayoutsWidget hasSearch={hasSearch} />
-            </div>
-          </div>
+          <TravelpayoutsWidget hasSearch={hasSearch} />
         </motion.div>
 
         {!hasSearch && (

@@ -9,24 +9,42 @@ import { useEffect } from "react";
 // like "DefaultSearch-module__mergedInputs".
 //
 // 1) Hide UI we don't want: "Powered by", "Show hotels", "Create multi-city".
-// 2) Layout only (no color changes): reshape the search form to a clear
-//    two-row grid inspired by classic metasearch UIs:
-//      Row 1 — Origin | Destination  (equal halves, full width)
-//      Row 2 — Depart | Return | Passengers | Search  (four equal columns)
-//    The stock single-row layout assigns each place input ~9.6rem below
-//    1440px, which truncates names like "New York, United States".
+// 2) Layout only (no color changes): compact two-row grid that stays readable
+//    without dominating the page:
+//      Row 1 — Origin | Destination
+//      Row 2 — Depart | Return | Passengers | Search
+//    The host caps the search bar at ~960px; these rules keep fields shorter
+//    and responsive across phone / tablet / desktop.
 // ---------------------------------------------------------------------------
 
 const HIDE_PATTERNS = [/powered\s*by/i, /show\s*hotels/i, /multi-?\s*city/i];
 
 const SEARCH_LAYOUT_CSS = `
-  /* ---- Desktop / tablet: 2-row grid ------------------------------------ */
+  /* ---- Compact 2-row grid (layout only — no color overrides) ----------- */
   [class*="DefaultSearch-module__root"] {
     display: grid !important;
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 0.5rem !important;
+    gap: 0.375rem !important;
     align-items: stretch !important;
     width: 100% !important;
+  }
+
+  /* Slightly shorter fields so the form doesn't dominate the hero */
+  [class*="Input-module__input"],
+  [class*="Input-module__button"] {
+    padding-top: 0.8rem !important;
+    padding-bottom: 0.8rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  [class*="Input-module__withSubvalue"] {
+    padding-top: 0.45rem !important;
+    padding-bottom: 0.45rem !important;
+  }
+
+  [class*="Button-module__root"] {
+    padding-block: 0.8rem !important;
+    font-size: 1rem !important;
   }
 
   /* Row 1: origin + destination span all 4 columns */
@@ -115,10 +133,17 @@ const SEARCH_LAYOUT_CSS = `
     min-width: 0 !important;
   }
 
-  /* ---- Narrow containers: stack cleanly -------------------------------- */
+  [class*="SearchEdit-module__form"],
+  [class*="SearchEdit-module__root"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* ---- Tablet / small desktop ------------------------------------------- */
   @container (width <= 700px) {
     [class*="DefaultSearch-module__root"] {
       grid-template-columns: 1fr 1fr !important;
+      gap: 0.375rem !important;
     }
 
     [class*="DefaultSearch-module__mergedInputs"],
@@ -134,6 +159,7 @@ const SEARCH_LAYOUT_CSS = `
     }
   }
 
+  /* ---- Phones ---------------------------------------------------------- */
   @container (width <= 480px) {
     [class*="DefaultSearch-module__root"] {
       grid-template-columns: 1fr !important;
@@ -161,6 +187,12 @@ const SEARCH_LAYOUT_CSS = `
     [data-skylerb-slot="places"] [class*="Input-module__root"] {
       width: 100% !important;
     }
+
+    [class*="Input-module__input"],
+    [class*="Input-module__button"],
+    [class*="Button-module__root"] {
+      padding-block: 0.75rem !important;
+    }
   }
 
   [class*="MultiRouteSearch-module__places"],
@@ -175,7 +207,7 @@ const SEARCH_LAYOUT_CSS = `
 function hideMatchingElements(root: ParentNode) {
   const candidates = Array.from(root.querySelectorAll<HTMLElement>("*"));
   for (const el of candidates) {
-    if (el.children.length > 0) continue; // only consider leaf nodes
+    if (el.children.length > 0) continue;
     const text = (el.textContent ?? "").trim().toLowerCase();
     if (!text || !HIDE_PATTERNS.some((p) => p.test(text))) continue;
     if (el.dataset.tpwlHidden === "1") continue;
@@ -251,7 +283,7 @@ function watchForShadowRoot(hostId: string, options: { injectLayout?: boolean } 
       attach(host);
       clearInterval(poll);
     } else if (++attempts > 60) {
-      clearInterval(poll); // give up after ~30s — widget likely didn't load
+      clearInterval(poll);
     }
   }, 500);
 

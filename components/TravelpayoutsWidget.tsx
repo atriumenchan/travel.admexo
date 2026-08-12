@@ -50,24 +50,29 @@ export default function TravelpayoutsWidget({ hasSearch = false }: Travelpayouts
         {...WP_PLUGIN_NOOP_ATTRS}
       />
 
-      {/* Skeleton search bar — visible instantly on first paint. The moment
-          the widget's script calls attachShadow() on this element, the
-          browser stops rendering this light-DOM content in favor of the
-          widget's shadow tree, so this disappears on its own with no JS
-          needed on our end. */}
-      <div id="tpwl-search">
-        {/* Skeleton mirrors the 2-row layout: airports on top, then
-            depart / return / passengers / search evenly below. */}
-        <div className="animate-pulse flex flex-col gap-2">
-          <div className="grid grid-cols-2 gap-2">
-            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
-            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
-            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
-            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
-            <div className="h-14 bg-brand-200/90 rounded-xl shadow-sm" />
+      {/* Search bar is intentionally capped (~960px) and centered so it
+          reads as a focused control on desktop, not a full-bleed panel.
+          Tickets below can still use the wider page column. */}
+      <div className="mx-auto w-full max-w-[960px]">
+        <div className="rounded-2xl sm:rounded-[22px] p-px bg-gradient-to-br from-white/40 via-white/10 to-accent-300/30 shadow-glow">
+          <div className="rounded-[15px] sm:rounded-[21px] glass p-1 sm:p-1.5">
+            {/* Skeleton search bar — visible instantly on first paint. The
+                moment the widget's script calls attachShadow() on #tpwl-search,
+                the browser stops rendering this light-DOM content. */}
+            <div id="tpwl-search">
+              <div className="animate-pulse flex flex-col gap-1.5">
+                <div className="grid grid-cols-2 gap-1.5">
+                  <div className="h-11 sm:h-12 bg-white/90 rounded-xl shadow-sm" />
+                  <div className="h-11 sm:h-12 bg-white/90 rounded-xl shadow-sm" />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                  <div className="h-11 sm:h-12 bg-white/90 rounded-xl shadow-sm" />
+                  <div className="h-11 sm:h-12 bg-white/90 rounded-xl shadow-sm" />
+                  <div className="h-11 sm:h-12 bg-white/90 rounded-xl shadow-sm" />
+                  <div className="h-11 sm:h-12 bg-brand-200/90 rounded-xl shadow-sm" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
