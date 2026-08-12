@@ -100,14 +100,19 @@ export interface InspirationCard {
   tag: string;
   image: string;
   description: string;
+  /** IATA destination code used to deep-link into the search widget. */
+  code: string;
 }
 
 export const TRAVEL_INSPIRATION: InspirationCard[] = [
-  { title: "Weekend in Barcelona", tag: "Weekend Ideas", image: "/destinations/dest-barcelona.jpg", description: "Tapas, Gaudí architecture, and Mediterranean sunsets — all within a short direct flight." },
-  { title: "Luxury Escape to Dubai", tag: "Luxury Escapes", image: "/destinations/dest-dubai.jpg", description: "Desert skylines, world-class dining, and five-star stays for less than you'd expect." },
-  { title: "Budget Bangkok", tag: "Budget Travel", image: "/destinations/dest-bangkok.jpg", description: "Street food capitals don't get better — and flights here are some of our best value routes." },
-  { title: "Sydney Coastal Adventure", tag: "Adventure Trips", image: "/destinations/dest-sydney.jpg", description: "Surf, harbour hikes, and coastal drives — a full itinerary starting the moment you land." },
+  { title: "Weekend in Barcelona", tag: "Weekend Ideas", image: "/destinations/dest-barcelona.jpg", description: "Tapas, Gaudí architecture, and Mediterranean sunsets — all within a short direct flight.", code: "BCN" },
+  { title: "Luxury Escape to Dubai", tag: "Luxury Escapes", image: "/destinations/dest-dubai.jpg", description: "Desert skylines, world-class dining, and five-star stays for less than you'd expect.", code: "DXB" },
+  { title: "Budget Bangkok", tag: "Budget Travel", image: "/destinations/dest-bangkok.jpg", description: "Street food capitals don't get better — and flights here are some of our best value routes.", code: "BKK" },
+  { title: "Sydney Coastal Adventure", tag: "Adventure Trips", image: "/destinations/dest-sydney.jpg", description: "Surf, harbour hikes, and coastal drives — a full itinerary starting the moment you land.", code: "SYD" },
 ];
+
+/** Example origin/destination for the illustrative results-preview section. */
+export const RESULTS_PREVIEW_ROUTE = { origin: "JFK", destination: "LHR" } as const;
 
 export const WHY_CHOOSE_US = [
   { title: "Real-time pricing", description: "Prices are pulled live from multiple providers in parallel, not cached once a day." },

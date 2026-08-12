@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Clock, Luggage, Leaf, Star, ShieldCheck, ArrowRight } from "lucide-react";
-import { RESULTS_PREVIEW } from "@/lib/mockContent";
+import { RESULTS_PREVIEW, RESULTS_PREVIEW_ROUTE } from "@/lib/mockContent";
+import { buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 
@@ -13,6 +14,8 @@ const BADGE_STYLE: Record<string, "success" | "brand" | "accent"> = {
 };
 
 export default function ResultsPreview() {
+  const searchHref = buildWidgetSearchPath(RESULTS_PREVIEW_ROUTE.origin, RESULTS_PREVIEW_ROUTE.destination);
+
   return (
     <section className="py-20 px-4 max-w-5xl mx-auto">
       <SectionHeading
@@ -23,13 +26,15 @@ export default function ResultsPreview() {
 
       <div className="space-y-3">
         {RESULTS_PREVIEW.map((flight, idx) => (
-          <motion.div
+          <motion.a
             key={flight.airline}
+            href={searchHref}
             initial={{ opacity: 0, x: -16 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.45, delay: idx * 0.07 }}
-            className="group bg-white rounded-[20px] border border-slate-100 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4"
+            className="group bg-white rounded-[20px] border border-slate-100 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 block"
+            title="Search this route for live prices"
           >
             <div className="flex items-center gap-3 w-full sm:w-44 shrink-0">
               <span className="w-11 h-11 rounded-xl bg-brand-gradient text-white font-bold text-xs flex items-center justify-center shadow-md shadow-brand-600/20">
@@ -67,10 +72,12 @@ export default function ResultsPreview() {
                 <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-white transition-colors" />
               </span>
             </div>
-          </motion.div>
+          </motion.a>
         ))}
       </div>
-      <p className="text-center text-xs text-slate-400 mt-6">Example results shown for illustration — search above for live prices.</p>
+      <p className="text-center text-xs text-slate-400 mt-6">
+        Example results shown for illustration — click any card to search live prices for this route.
+      </p>
     </section>
   );
 }

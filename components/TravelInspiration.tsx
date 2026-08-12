@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TRAVEL_INSPIRATION } from "@/lib/mockContent";
+import { buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export default function TravelInspiration() {
@@ -17,13 +18,15 @@ export default function TravelInspiration() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {TRAVEL_INSPIRATION.map((card, idx) => (
-          <motion.div
+          <motion.a
             key={card.title}
+            href={buildWidgetSearchPath("JFK", card.code)}
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.55, delay: idx * 0.1 }}
-            className="group relative overflow-hidden rounded-[28px] shadow-card hover:shadow-card-hover transition-shadow duration-500"
+            className="group relative overflow-hidden rounded-[28px] shadow-card hover:shadow-card-hover transition-shadow duration-500 block"
+            title={`Search flights to ${card.title}`}
           >
             <div className="relative aspect-[16/10]">
               <Image
@@ -43,7 +46,7 @@ export default function TravelInspiration() {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </motion.a>
         ))}
       </div>
     </section>

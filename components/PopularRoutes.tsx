@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ExternalLink, ArrowUpRight, Thermometer, Clock, TrendingDown } from "lucide-react";
+import { ArrowUpRight, Thermometer, Clock, TrendingDown } from "lucide-react";
 import { PopularRoute, POPULAR_DESTINATIONS, FALLBACK_POPULAR_ROUTES, getAirlineName, buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { DESTINATION_DETAILS } from "@/lib/mockContent";
 import { formatPrice } from "@/lib/utils";
@@ -22,15 +22,18 @@ export default function PopularRoutes({ routes }: PopularRoutesProps) {
         const city = dest?.city ?? route.destination;
         const country = dest?.country ?? "";
         const emoji = dest?.emoji ?? "✈️";
+        const searchHref = buildWidgetSearchPath(route.origin || "JFK", route.destination, route.departure_at);
 
         return (
-          <motion.div
+          <motion.a
             key={route.destination}
+            href={searchHref}
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: (idx % 3) * 0.08 }}
-            className="group relative overflow-hidden rounded-[24px] shadow-card hover:shadow-card-hover transition-shadow duration-500"
+            className="group relative overflow-hidden rounded-[24px] shadow-card hover:shadow-card-hover transition-shadow duration-500 block"
+            title={`Search flights to ${city}`}
           >
             <div className="relative aspect-[4/5] sm:aspect-[3/4]">
               {detail && (
@@ -42,11 +45,9 @@ export default function PopularRoutes({ routes }: PopularRoutesProps) {
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
               )}
-              {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/0" />
               <div className="absolute inset-0 bg-gradient-to-br from-brand-600/0 via-transparent to-accent-500/0 group-hover:from-brand-600/15 group-hover:to-accent-500/15 transition-colors duration-500" />
 
-              {/* Top row: flag + airport code + savings */}
               <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
                 <span className="glass text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5">
                   <span className="text-base leading-none">{emoji}</span>
@@ -60,7 +61,6 @@ export default function PopularRoutes({ routes }: PopularRoutesProps) {
                 )}
               </div>
 
-              {/* Bottom content */}
               <div className="absolute inset-x-0 bottom-0 p-5">
                 <p className="text-white font-bold text-2xl leading-tight">{city}</p>
                 <p className="text-white/60 text-xs mb-3">{country}</p>
@@ -81,32 +81,13 @@ export default function PopularRoutes({ routes }: PopularRoutesProps) {
                     <p className="text-white/50 text-[11px] mb-0.5">From New York · {getAirlineName(route.airline)}</p>
                     <p className="text-white font-bold text-3xl tracking-tight">{formatPrice(route.price)}</p>
                   </div>
-                  <div className="flex gap-2">
-                    {/* Plain <a>, not next/link — this stays on "/" but with a
-                        different query string, and the embedded Travelpayouts
-                        widget only reads that param on a fresh page load, not
-                        on Next's soft client-side navigation. */}
-                    <a
-                      href={buildWidgetSearchPath(route.origin || "JFK", route.destination, route.departure_at)}
-                      className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white flex items-center justify-center transition-all hover:scale-105"
-                      title="View flights"
-                    >
-                      <ArrowUpRight className="w-4 h-4" />
-                    </a>
-                    <a
-                      href={route.link}
-                      target="_blank"
-                      rel="noopener noreferrer sponsored"
-                      className="w-10 h-10 rounded-full bg-white hover:bg-slate-100 text-slate-900 flex items-center justify-center transition-all hover:scale-105 shadow-lg"
-                      title="Book now"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
+                  <span className="w-10 h-10 rounded-full bg-white/15 group-hover:bg-white/25 backdrop-blur-sm text-white flex items-center justify-center transition-all group-hover:scale-105">
+                    <ArrowUpRight className="w-4 h-4" />
+                  </span>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </motion.a>
         );
       })}
     </div>

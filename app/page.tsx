@@ -8,6 +8,7 @@ import HowItWorks from "@/components/HowItWorks";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import Testimonials from "@/components/Testimonials";
 import TravelInspiration from "@/components/TravelInspiration";
+import SiteDisclaimer from "@/components/SiteDisclaimer";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getPopularRoutes } from "@/lib/travelpayouts";
 
@@ -62,6 +63,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <TravelInspiration />
         </>
       )}
+
+      <SiteDisclaimer />
     </>
   );
 }

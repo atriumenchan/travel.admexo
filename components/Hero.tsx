@@ -3,13 +3,14 @@
 import { motion } from "framer-motion";
 import { Plane } from "lucide-react";
 import TravelpayoutsWidget from "@/components/TravelpayoutsWidget";
+import { buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { cn } from "@/lib/utils";
 
 const CHIPS = [
-  { emoji: "🇬🇧", label: "London", price: "$412" },
-  { emoji: "🇯🇵", label: "Tokyo", price: "$780" },
-  { emoji: "🇦🇪", label: "Dubai", price: "$649" },
-  { emoji: "🇪🇸", label: "Barcelona", price: "$289" },
+  { emoji: "🇬🇧", label: "London", price: "$412", code: "LHR" },
+  { emoji: "🇯🇵", label: "Tokyo", price: "$780", code: "NRT" },
+  { emoji: "🇦🇪", label: "Dubai", price: "$649", code: "DXB" },
+  { emoji: "🇪🇸", label: "Barcelona", price: "$289", code: "BCN" },
 ];
 
 interface HeroProps {
@@ -127,16 +128,18 @@ export default function Hero({ hasSearch }: HeroProps) {
               className="flex flex-wrap items-center justify-center gap-3"
             >
               {CHIPS.map((chip, i) => (
-                <motion.span
+                <motion.a
                   key={chip.label}
-                  className="glass rounded-full px-4 py-2 flex items-center gap-2 text-sm text-white/90"
+                  href={buildWidgetSearchPath("JFK", chip.code)}
+                  className="glass rounded-full px-4 py-2 flex items-center gap-2 text-sm text-white/90 hover:bg-white/15 transition-colors"
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 4 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+                  title={`Search flights to ${chip.label}`}
                 >
                   <span>{chip.emoji}</span>
                   <span className="font-medium">{chip.label}</span>
                   <span className="text-accent-300 font-semibold">{chip.price}</span>
-                </motion.span>
+                </motion.a>
               ))}
             </motion.div>
 

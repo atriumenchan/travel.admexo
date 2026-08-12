@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Phone, Wallet, Headset, ShieldCheck, Mail, Clock } from "lucide-react";
+import SiteDisclaimer from "@/components/SiteDisclaimer";
 import { SITE_NAME, SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL, SUPPORT_EMAIL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
@@ -15,10 +16,7 @@ const FEATURES = [
   { icon: ShieldCheck, title: "Honest process", description: "No hidden fees or markups. Bookings are always completed on the airline or OTA's site." },
 ];
 
-// Kept honest and consistent between the mobile and desktop views on
-// purpose: we're an independent comparison site, not an airline, and this
-// line is not a booking hotline for any specific carrier.
-const DISCLAIMER = `${SITE_NAME} is an independent flight metasearch platform. We are not an airline or a travel agency and do not sell tickets directly. This line is here to help you compare fares and use ${SITE_NAME} — if you need help with an existing booking, please contact the airline or agency you booked with directly.`;
+const SUPPORT_LINE_NOTE = `This line is here to help you compare fares and use ${SITE_NAME} — if you need help with an existing booking, please contact the airline or agency you booked with directly.`;
 
 export default function ContactPage() {
   return (
@@ -88,15 +86,18 @@ export default function ContactPage() {
           </a>
         </section>
 
-        <section className="px-6 py-8 text-xs text-slate-500 leading-relaxed">{DISCLAIMER}</section>
+        <section className="px-6 py-6 text-xs text-slate-500 leading-relaxed">
+          <p>{SUPPORT_LINE_NOTE}</p>
+        </section>
 
-        <footer className="bg-slate-950 text-slate-500 text-xs px-6 py-6 text-center space-y-2">
-          <p>© {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</p>
-          <div className="flex items-center justify-center gap-4">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
-          </div>
-        </footer>
+        <div className="bg-slate-950 text-slate-500 text-xs px-6 py-6 text-center space-y-2 md:hidden">
+          <p>
+            © {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
+          </p>
+          <Link href="/" className="hover:text-white transition-colors">
+            Back to search
+          </Link>
+        </div>
       </div>
 
       {/* ------------------------------------------------------------------
@@ -148,10 +149,12 @@ export default function ContactPage() {
               </a>
             </div>
 
-            <p className="text-xs text-slate-400 mt-8 leading-relaxed">{DISCLAIMER}</p>
+            <p className="text-xs text-slate-400 mt-8 leading-relaxed">{SUPPORT_LINE_NOTE}</p>
           </div>
         </section>
       </div>
+
+      <SiteDisclaimer />
     </>
   );
 }
