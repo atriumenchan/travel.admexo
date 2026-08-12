@@ -479,10 +479,12 @@ export function buildWidgetSearchPath(
   origin: string,
   destination: string,
   departDate?: string,
-  passengers = 1
+  passengers = 1,
+  returnDate?: string
 ): string {
   const depart = departDate && departDate.length >= 10 ? departDate : defaultFutureDate();
-  return `/?flightSearch=${searchCode(origin, destination, depart, undefined, passengers)}`;
+  const ret = returnDate && returnDate.length >= 10 ? returnDate : undefined;
+  return `/?flightSearch=${searchCode(origin, destination, depart, ret, passengers)}`;
 }
 
 export function formatDuration(minutes: number): string {
