@@ -9,57 +9,160 @@ import { useEffect } from "react";
 // like "DefaultSearch-module__mergedInputs".
 //
 // 1) Hide UI we don't want: "Powered by", "Show hotels", "Create multi-city".
-// 2) Fix cramped airport fields: the default single-row layout assigns each
-//    origin/destination input a ~9.6rem min-width below 1440px, which clips
-//    names like "New York, United States" / "Los Angeles" behind ellipsis.
-//    We give the airport pair a full-width first row so both cities (and
-//    their IATA codes) stay readable, with dates / passengers / search on
-//    the second row.
+// 2) Layout only (no color changes): reshape the search form to a clear
+//    two-row grid inspired by classic metasearch UIs:
+//      Row 1 — Origin | Destination  (equal halves, full width)
+//      Row 2 — Depart | Return | Passengers | Search  (four equal columns)
+//    The stock single-row layout assigns each place input ~9.6rem below
+//    1440px, which truncates names like "New York, United States".
 // ---------------------------------------------------------------------------
 
 const HIDE_PATTERNS = [/powered\s*by/i, /show\s*hotels/i, /multi-?\s*city/i];
 
 const SEARCH_LAYOUT_CSS = `
-  /* Full-width airport pair on its own row so city names aren't truncated */
+  /* ---- Desktop / tablet: 2-row grid ------------------------------------ */
   [class*="DefaultSearch-module__root"] {
-    flex-wrap: wrap !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
     align-items: stretch !important;
+    width: 100% !important;
   }
 
-  [class*="DefaultSearch-module__mergedInputs"] {
-    flex: 1 1 100% !important;
+  /* Row 1: origin + destination span all 4 columns */
+  [class*="DefaultSearch-module__mergedInputs"],
+  [data-skylerb-slot="places"] {
+    grid-column: 1 / -1 !important;
+    display: flex !important;
     width: 100% !important;
-    min-width: 100% !important;
+    min-width: 0 !important;
     max-width: 100% !important;
   }
 
-  [class*="DefaultSearch-module__mergedInputs"] [class*="Input-module__root"] {
+  [class*="DefaultSearch-module__mergedInputs"] [class*="Input-module__root"],
+  [class*="DefaultSearch-module__mergedInputLeft"],
+  [class*="DefaultSearch-module__mergedInputRight"],
+  [data-skylerb-slot="places"] [class*="Input-module__root"] {
     flex: 1 1 0 !important;
+    width: 50% !important;
     min-width: 0 !important;
+    max-width: none !important;
     overflow: hidden !important;
   }
 
-  /* Prefer clipping over aggressive ellipsis once we have enough width;
-     with a full-width row, common city names fit without truncation. */
-  [class*="DefaultSearch-module__mergedInputs"] [class*="Input-module__input"] {
+  [class*="DefaultSearch-module__mergedInputs"] [class*="Input-module__input"],
+  [data-skylerb-slot="places"] [class*="Input-module__input"] {
     text-overflow: ellipsis !important;
   }
 
-  /* Second row: dates + passengers share space; search stays compact */
-  [class*="DefaultSearch-module__flex1"] {
-    flex: 1 1 11rem !important;
-    min-width: 10rem !important;
-    max-width: 100% !important;
+  /* Row 2: dates take 2 of 4 columns (Depart | Return inside) */
+  [data-skylerb-slot="dates"],
+  [class*="DefaultSearch-module__flex1"]:has([class*="DateRangePicker"]),
+  [class*="DefaultSearch-module__flex1"]:has([class*="DatePicker"]) {
+    grid-column: span 2 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
   }
 
-  [class*="DefaultSearch-module__submitBtn"],
+  [class*="DateRangePicker-module__mergedInputs"] {
+    display: flex !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+  }
+
+  [class*="DateRangePicker-module__mergedInputs"] [class*="Input-module__root"],
+  [class*="DateRangePicker-module__mergedInputLeft"],
+  [class*="DateRangePicker-module__mergedInputRight"] {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: 50% !important;
+  }
+
+  [data-skylerb-slot="passengers"],
+  [class*="DefaultSearch-module__flex1"]:has([class*="PassengersPicker"]),
+  [class*="DefaultSearch-module__passengersPicker"] {
+    grid-column: span 1 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  [data-skylerb-slot="submit"],
+  [class*="DefaultSearch-module__submitBtn"] {
+    grid-column: span 1 !important;
+    display: flex !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  [data-skylerb-slot="submit"] [class*="Button-module__root"],
+  [data-skylerb-slot="submit"] button,
+  [class*="DefaultSearch-module__submitBtn"] [class*="Button-module__root"],
   [class*="DefaultSearch-module__submitBtn"] button {
-    flex: 1 1 10rem !important;
-    min-width: 10rem !important;
-    max-width: 100% !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
   }
 
-  /* Multi-city variant (if shown): same priority for the places block */
+  [class*="DefaultSearch-module__flex1"] {
+    min-width: 0 !important;
+  }
+  [class*="DefaultSearch-module__flex2"] {
+    grid-column: 1 / -1 !important;
+    min-width: 0 !important;
+  }
+
+  /* ---- Narrow containers: stack cleanly -------------------------------- */
+  @container (width <= 700px) {
+    [class*="DefaultSearch-module__root"] {
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    [class*="DefaultSearch-module__mergedInputs"],
+    [data-skylerb-slot="places"],
+    [data-skylerb-slot="dates"] {
+      grid-column: 1 / -1 !important;
+    }
+
+    [data-skylerb-slot="passengers"],
+    [data-skylerb-slot="submit"],
+    [class*="DefaultSearch-module__submitBtn"] {
+      grid-column: span 1 !important;
+    }
+  }
+
+  @container (width <= 480px) {
+    [class*="DefaultSearch-module__root"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    [class*="DefaultSearch-module__mergedInputs"],
+    [class*="DefaultSearch-module__flex1"],
+    [class*="DefaultSearch-module__passengersPicker"],
+    [class*="DefaultSearch-module__submitBtn"],
+    [data-skylerb-slot="places"],
+    [data-skylerb-slot="dates"],
+    [data-skylerb-slot="passengers"],
+    [data-skylerb-slot="submit"] {
+      grid-column: 1 / -1 !important;
+    }
+
+    [class*="DefaultSearch-module__mergedInputs"],
+    [data-skylerb-slot="places"] {
+      flex-direction: column !important;
+    }
+
+    [class*="DefaultSearch-module__mergedInputs"] [class*="Input-module__root"],
+    [class*="DefaultSearch-module__mergedInputLeft"],
+    [class*="DefaultSearch-module__mergedInputRight"],
+    [data-skylerb-slot="places"] [class*="Input-module__root"] {
+      width: 100% !important;
+    }
+  }
+
   [class*="MultiRouteSearch-module__places"],
   [class*="MultiRouteSearch-module__mergedInputs"] {
     min-width: 0 !important;
@@ -90,8 +193,35 @@ function hideMatchingElements(root: ParentNode) {
   }
 }
 
+function applySearchLayoutHints(shadowRoot: ShadowRoot) {
+  const root = shadowRoot.querySelector<HTMLElement>('[class*="DefaultSearch-module__root"]');
+  if (!root) return;
+
+  for (const el of Array.from(root.children) as HTMLElement[]) {
+    const cls = el.className?.toString?.() ?? "";
+    if (cls.includes("mergedInputs") || cls.includes("flex2") || el.querySelector('[class*="mergedInputs"]')) {
+      el.dataset.skylerbSlot = "places";
+    } else if (el.querySelector('[class*="DateRangePicker"], [class*="DatePicker"], [class*="FlightsDate"]')) {
+      el.dataset.skylerbSlot = "dates";
+    } else if (
+      cls.includes("passengersPicker") ||
+      el.querySelector('[class*="PassengersPicker"], [class*="TripClass"]')
+    ) {
+      el.dataset.skylerbSlot = "passengers";
+    } else if (cls.includes("submitBtn") || el.tagName === "BUTTON" || el.querySelector("button")) {
+      el.dataset.skylerbSlot = "submit";
+    }
+  }
+}
+
 function injectSearchLayoutStyles(shadowRoot: ShadowRoot) {
-  if (shadowRoot.querySelector("style[data-skylerb-search-layout]")) return;
+  applySearchLayoutHints(shadowRoot);
+
+  const existing = shadowRoot.querySelector("style[data-skylerb-search-layout]") as HTMLStyleElement | null;
+  if (existing) {
+    if (existing.textContent !== SEARCH_LAYOUT_CSS) existing.textContent = SEARCH_LAYOUT_CSS;
+    return;
+  }
   const style = document.createElement("style");
   style.dataset.skylerbSearchLayout = "1";
   style.textContent = SEARCH_LAYOUT_CSS;

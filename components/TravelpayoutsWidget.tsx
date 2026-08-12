@@ -56,12 +56,18 @@ export default function TravelpayoutsWidget({ hasSearch = false }: Travelpayouts
           widget's shadow tree, so this disappears on its own with no JS
           needed on our end. */}
       <div id="tpwl-search">
-        <div className="animate-pulse bg-transparent rounded-[24px] p-0.5 flex flex-col gap-2">
-          <div className="h-14 bg-white/90 rounded-2xl shadow-sm" />
-          <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex-1 h-14 bg-white/90 rounded-2xl shadow-sm" />
-            <div className="flex-1 h-14 bg-white/90 rounded-2xl shadow-sm" />
-            <div className="sm:w-40 h-14 bg-brand-200/90 rounded-2xl shadow-sm" />
+        {/* Skeleton mirrors the 2-row layout: airports on top, then
+            depart / return / passengers / search evenly below. */}
+        <div className="animate-pulse flex flex-col gap-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
+            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
+            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
+            <div className="h-14 bg-white/90 rounded-xl shadow-sm" />
+            <div className="h-14 bg-brand-200/90 rounded-xl shadow-sm" />
           </div>
         </div>
       </div>
