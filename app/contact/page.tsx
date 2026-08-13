@@ -94,9 +94,17 @@ export default function ContactPage() {
           <p>
             © {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
           </p>
-          <Link href="/" className="hover:text-white transition-colors">
-            Back to search
-          </Link>
+          <div className="flex items-center justify-center gap-4">
+            <Link href="/privacy" className="hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-white transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="/" className="hover:text-white transition-colors">
+              Search
+            </Link>
+          </div>
         </div>
       </div>
 

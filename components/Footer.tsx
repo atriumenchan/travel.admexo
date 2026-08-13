@@ -23,8 +23,22 @@ const COLUMNS = [
     ],
   },
   {
-    title: "Support",
-    links: [{ label: "Contact Us", href: "/contact" }],
+    title: "Company",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Press", href: "/press" },
+      { label: "Partners", href: "/partners" },
+    ],
+  },
+  {
+    title: "Support & Legal",
+    links: [
+      { label: "Help Center", href: "/help" },
+      { label: "Contact Us", href: "/contact" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+    ],
   },
 ];
 
@@ -34,8 +48,8 @@ export default function Footer() {
       <div className="absolute inset-0 bg-hero-gradient opacity-[0.08] pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-10 mb-12">
+          <div className="col-span-2 sm:col-span-3 lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 text-white font-bold text-xl mb-4">
               <span className="w-8 h-8 rounded-xl bg-brand-gradient flex items-center justify-center">
                 <Plane className="w-4 h-4 text-white" />
@@ -56,9 +70,15 @@ export default function Footer() {
                   <li key={link.label}>
                     {/* Plain <a> for widget deep links — forces a real page load
                         so the embedded widget picks up the flightSearch param. */}
-                    <a href={link.href} className="hover:text-white transition-colors">
-                      {link.label}
-                    </a>
+                    {link.href.startsWith("/?") || link.href.includes("flightSearch") ? (
+                      <a href={link.href} className="hover:text-white transition-colors">
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link href={link.href} className="hover:text-white transition-colors">
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -71,6 +91,17 @@ export default function Footer() {
             © {new Date().getFullYear()} {SITE_NAME}. Prices are subject to change. Affiliate links may earn a
             commission.
           </p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="hover:text-white transition-colors">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-white transition-colors">
+              Terms
+            </Link>
+            <Link href="/about" className="hover:text-white transition-colors">
+              About
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
