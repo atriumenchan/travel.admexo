@@ -4,17 +4,17 @@ import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { SITE_NAME, SITE_TAGLINE } from "@/lib/siteConfig";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: {
-    default: "Skylerb — Find the Cheapest Flights",
-    template: "%s | Skylerb",
+    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Compare flights from hundreds of airlines and booking sites to find the cheapest prices. Skylerb is your metasearch engine for affordable air travel.",
-  keywords: ["cheap flights", "flight search", "airline tickets", "flight deals", "compare flights"],
+  description: `${SITE_TAGLINE}. Compare flights from hundreds of airlines and booking sites with ${SITE_NAME}.`,
+  keywords: ["cheap flights", "flight search", "airline tickets", "flight deals", "compare flights", SITE_TAGLINE],
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -25,14 +25,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "Skylerb",
-    title: "Skylerb — Find the Cheapest Flights",
-    description: "Compare flights from hundreds of airlines and booking sites.",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: `${SITE_TAGLINE}. Compare flights from hundreds of airlines and booking sites.`,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Skylerb — Find the Cheapest Flights",
-    description: "Compare flights from hundreds of airlines and booking sites.",
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: `${SITE_TAGLINE}. Compare flights from hundreds of airlines and booking sites.`,
   },
   robots: { index: true, follow: true },
 };

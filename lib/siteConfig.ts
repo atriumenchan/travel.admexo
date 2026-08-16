@@ -5,6 +5,7 @@
 export const SITE_NAME = "Skylerb";
 export const SITE_DOMAIN = "skylerb.com";
 export const SITE_URL = "https://travel-admexo.vercel.app";
+export const SITE_TAGLINE = "Low-Cost, Easy, Reliable Booking";
 export const LEGAL_EFFECTIVE_DATE = "August 12, 2026";
 
 export const SUPPORT_PHONE_DISPLAY = "+1 (206) 152-5588";

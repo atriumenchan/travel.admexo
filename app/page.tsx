@@ -11,11 +11,11 @@ import TravelInspiration from "@/components/TravelInspiration";
 import SiteDisclaimer from "@/components/SiteDisclaimer";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getPopularRoutes } from "@/lib/travelpayouts";
+import { SITE_NAME, SITE_TAGLINE } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Skylerb — Find the Best Flights, Not Just the Cheapest",
-  description:
-    "Search and compare flights from hundreds of airlines. Find the best deals on cheap flights worldwide with Skylerb.",
+  title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+  description: `${SITE_TAGLINE}. Search and compare flights from hundreds of airlines with ${SITE_NAME}.`,
 };
 
 interface HomePageProps {

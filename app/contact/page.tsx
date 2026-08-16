@@ -5,6 +5,7 @@ import SiteDisclaimer from "@/components/SiteDisclaimer";
 import MobileSupportLanding from "@/components/MobileSupportLanding";
 import {
   SITE_NAME,
+  SITE_TAGLINE,
   SUPPORT_PHONE_DISPLAY,
   SUPPORT_PHONE_TEL,
   SUPPORT_EMAIL,
@@ -25,6 +26,7 @@ export default function ContactPage() {
       <div className="hidden md:block bg-surface">
         <section className="bg-hero-gradient px-4 py-16 text-center">
           <h1 className="text-4xl font-bold text-white mb-2">Contact Us</h1>
+          <p className="text-accent-300 font-semibold mb-1">{SITE_TAGLINE}</p>
           <p className="text-indigo-100/80">Search, Compare &amp; Save!</p>
         </section>
 

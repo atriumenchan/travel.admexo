@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SimpleSearchBar from "@/components/SimpleSearchBar";
 import SiteDisclaimer from "@/components/SiteDisclaimer";
-import { SITE_NAME, SITE_DISCLAIMER } from "@/lib/siteConfig";
+import { SITE_NAME, SITE_DISCLAIMER, SITE_TAGLINE } from "@/lib/siteConfig";
 
 type AirlineLanding = {
   slug: string;
@@ -73,6 +73,7 @@ export default function AirlineSearchLandingPage({ params }: { params: { airline
   return (
     <div className="bg-surface min-h-screen">
       <section className="bg-hero-gradient px-4 pt-10 pb-8 sm:pt-14 sm:pb-10 text-center">
+        <p className="text-accent-300 font-semibold text-sm mb-1">{SITE_TAGLINE}</p>
         <p className="text-indigo-100/90 text-sm mb-2">Search, Compare &amp; Save!</p>
         <div className="inline-block rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-xs text-white/90 mb-5 max-w-xl">
           {SITE_NAME} is an independent flight metasearch and comparison platform. We are not {landing.airlineName}{" "}

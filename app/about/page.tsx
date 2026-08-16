@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ContentPage, { Section } from "@/components/ContentPage";
-import { SITE_NAME, SUPPORT_EMAIL, SITE_DISCLAIMER } from "@/lib/siteConfig";
+import { SITE_NAME, SUPPORT_EMAIL, SITE_DISCLAIMER, SITE_TAGLINE } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -35,7 +35,9 @@ export default function AboutPage() {
           focus on providing a straightforward comparison experience that helps you spend less time looking for
           flights and more time planning the journey ahead.
         </p>
-        <p className="font-semibold text-slate-800">{SITE_NAME} — Search smarter. Fly better.</p>
+        <p className="font-semibold text-slate-800">
+          {SITE_NAME} — {SITE_TAGLINE}
+        </p>
         <p>
           Questions?{" "}
           <Link href="/contact" className="text-brand-600 hover:underline font-medium">

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plane } from "lucide-react";
 import { buildWidgetSearchPath } from "@/lib/travelpayouts";
-import { SITE_NAME } from "@/lib/siteConfig";
+import { SITE_NAME, SITE_TAGLINE } from "@/lib/siteConfig";
 
 const COLUMNS = [
   {
@@ -50,12 +50,13 @@ export default function Footer() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-10 mb-12">
           <div className="col-span-2 sm:col-span-3 lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 text-white font-bold text-xl mb-4">
+            <Link href="/" className="flex items-center gap-2 text-white font-bold text-xl mb-2">
               <span className="w-8 h-8 rounded-xl bg-brand-gradient flex items-center justify-center">
                 <Plane className="w-4 h-4 text-white" />
               </span>
               {SITE_NAME}
             </Link>
+            <p className="text-accent-300/90 text-sm font-semibold mb-3">{SITE_TAGLINE}</p>
             <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
               An independent flight metasearch engine comparing prices from hundreds of airlines and booking
               sites. All bookings are completed on the airline or travel provider&apos;s website.

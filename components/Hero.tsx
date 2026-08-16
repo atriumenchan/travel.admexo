@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Plane } from "lucide-react";
 import TravelpayoutsWidget from "@/components/TravelpayoutsWidget";
 import { buildWidgetSearchPath } from "@/lib/travelpayouts";
+import { SITE_TAGLINE } from "@/lib/siteConfig";
 import { cn } from "@/lib/utils";
 
 const CHIPS = [
@@ -88,7 +89,7 @@ export default function Hero({ hasSearch }: HeroProps) {
             >
               <Plane className="w-3.5 h-3.5 text-accent-300" />
               <span className="text-white/90 text-xs font-semibold uppercase tracking-widest">
-                Flight Metasearch, Reimagined
+                {SITE_TAGLINE}
               </span>
             </motion.div>
 
@@ -99,7 +100,7 @@ export default function Hero({ hasSearch }: HeroProps) {
             </h1>
 
             <p className="mt-6 text-lg sm:text-xl text-indigo-100/80 max-w-xl mx-auto leading-relaxed">
-              Compare 700+ airlines and booking sites in seconds. No hidden fees. No markups. No nonsense.
+              {SITE_TAGLINE}. Compare 700+ airlines and booking sites in seconds.
             </p>
           </motion.div>
         )}
@@ -142,11 +143,11 @@ export default function Hero({ hasSearch }: HeroProps) {
             </motion.div>
 
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-indigo-100/70 text-sm">
-              <span>No booking fees</span>
+              <span>Low-Cost</span>
               <span className="hidden sm:inline text-white/20">•</span>
-              <span>Lowest prices guaranteed</span>
+              <span>Easy</span>
               <span className="hidden sm:inline text-white/20">•</span>
-              <span>700+ airlines compared</span>
+              <span>Reliable Booking</span>
             </div>
           </>
         )}

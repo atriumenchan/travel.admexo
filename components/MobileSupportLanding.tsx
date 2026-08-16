@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import {
   SITE_NAME,
+  SITE_TAGLINE,
   SUPPORT_PHONE_DISPLAY,
   SUPPORT_PHONE_TEL,
   SUPPORT_EMAIL,
@@ -78,6 +79,7 @@ export default function MobileSupportLanding() {
             <div>
               <p className="text-accent-300 text-[11px] font-bold uppercase tracking-widest">Support Center</p>
               <p className="text-white font-bold text-lg leading-tight">{SITE_NAME}</p>
+              <p className="text-indigo-200/90 text-[11px] font-medium mt-0.5">{SITE_TAGLINE}</p>
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 text-[11px] font-semibold px-2.5 py-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -213,6 +215,7 @@ export default function MobileSupportLanding() {
         <div className="rounded-2xl bg-hero-gradient p-5 text-center text-white">
           <Headset className="w-8 h-8 mx-auto mb-2 text-accent-300" />
           <p className="font-bold text-lg mb-1">Need help? Call {SITE_NAME}</p>
+          <p className="text-accent-300 text-xs font-semibold mb-1">{SITE_TAGLINE}</p>
           <p className="text-indigo-100/85 text-sm mb-4">Independent flight comparison support — not an airline.</p>
           <a
             href={`tel:${SUPPORT_PHONE_TEL}`}
