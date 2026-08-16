@@ -111,3 +111,17 @@ html.mobile-landing footer {
 html.mobile-landing main {
   min-height: 100vh;
 }
+
+/* Readable content pages */
+.prose-skylerb a {
+  @apply text-brand-600 hover:underline font-medium;
+}
+.prose-skylerb ul {
+  @apply list-disc pl-5 space-y-2 marker:text-brand-500;
+}
+.prose-skylerb ol {
+  @apply list-decimal pl-5 space-y-2;
+}
+.prose-skylerb strong {
+  @apply font-semibold text-slate-800;
+}
