@@ -34,12 +34,12 @@ const TRUST = [
 const HELP_ITEMS = [
   {
     title: "Compare fares",
-    description: "Get help searching routes and comparing flight options on Skylerb.",
+    description: `Get help searching routes and comparing flight options on ${SITE_NAME}.`,
     icon: Search,
     tone: "bg-emerald-50 text-emerald-700 border-emerald-100",
   },
   {
-    title: "Using Skylerb",
+    title: `Using ${SITE_NAME}`,
     description: "Questions about results, redirects, or how booking works on partner sites.",
     icon: HelpCircle,
     tone: "bg-brand-50 text-brand-700 border-brand-100",

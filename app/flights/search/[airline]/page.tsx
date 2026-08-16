@@ -20,7 +20,7 @@ const LANDINGS: Record<string, AirlineLanding> = {
     airlineName: "Southwest Airlines",
     title: "Southwest Airlines Flight Search & Fare Comparison",
     description:
-      "Explore Southwest Airlines flight options on Skylerb, an independent flight metasearch platform. We gather fare data from travel providers so you can view routes, schedules, and pricing in one place. We are not affiliated with Southwest Airlines and we do not issue tickets.",
+      `Explore Southwest Airlines flight options on ${SITE_NAME}, an independent flight metasearch platform. We gather fare data from travel providers so you can view routes, schedules, and pricing in one place. We are not affiliated with Southwest Airlines and we do not issue tickets.`,
     bullets: [
       "Compare one-way and round-trip Southwest Airlines flights",
       "View estimated fares offered by different travel partners",
@@ -33,7 +33,7 @@ const LANDINGS: Record<string, AirlineLanding> = {
     airlineName: "United Airlines",
     title: "United Airlines Flight Search & Fare Comparison",
     description:
-      "Explore United Airlines flight options on Skylerb, an independent flight metasearch platform. We gather fare data from travel providers so you can view routes, schedules, and pricing in one place. We are not affiliated with United Airlines and we do not issue tickets.",
+      `Explore United Airlines flight options on ${SITE_NAME}, an independent flight metasearch platform. We gather fare data from travel providers so you can view routes, schedules, and pricing in one place. We are not affiliated with United Airlines and we do not issue tickets.`,
     bullets: [
       "Compare one-way and round-trip United Airlines flights",
       "View estimated fares offered by different travel partners",

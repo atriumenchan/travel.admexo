@@ -9,6 +9,7 @@ import ResultsFilter from "@/components/ResultsFilter";
 import { searchFlights, getMonthlyPrices } from "@/lib/travelpayouts";
 import { searchAllProviders, type ProviderStatus } from "@/lib/aggregator";
 import { parseSlugs } from "@/lib/utils";
+import { SITE_NAME } from "@/lib/siteConfig";
 import { AlertCircle, Plane, Zap } from "lucide-react";
 
 export const maxDuration = 60;
@@ -32,8 +33,8 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   const { origin, destination } = parsed;
   const depart = searchParams.departDate ?? "";
   return {
-    title: `Flights from ${origin} to ${destination}${depart ? ` on ${depart}` : ""} — Skylerb`,
-    description: `Find the cheapest flights from ${origin} to ${destination}. Compare prices from hundreds of airlines and book the best deal on Skylerb.`,
+    title: `Flights from ${origin} to ${destination}${depart ? ` on ${depart}` : ""} — ${SITE_NAME}`,
+    description: `Find the cheapest flights from ${origin} to ${destination}. Compare prices from hundreds of airlines and book the best deal on ${SITE_NAME}.`,
     openGraph: {
       title: `Cheap Flights: ${origin} → ${destination}`,
       description: `Compare and book cheap flights from ${origin} to ${destination}.`,

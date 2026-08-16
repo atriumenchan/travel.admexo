@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Zap, Bell, CalendarRange, Sparkles, BadgeDollarSign, BrainCircuit } from "lucide-react";
 import { WHY_CHOOSE_US } from "@/lib/mockContent";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { SITE_NAME } from "@/lib/siteConfig";
 
 const ICONS = [Zap, Bell, CalendarRange, Sparkles, BadgeDollarSign, BrainCircuit];
 
@@ -11,7 +12,7 @@ export default function WhyChooseUs() {
   return (
     <section className="py-20 px-4 max-w-7xl mx-auto">
       <SectionHeading
-        eyebrow="Why Skylerb"
+        eyebrow={`Why ${SITE_NAME}`}
         title="Built for people who fly often"
         description="Every detail is designed around getting you the right flight, not just any flight."
       />

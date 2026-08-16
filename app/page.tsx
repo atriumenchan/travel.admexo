@@ -53,7 +53,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
           <section id="how-it-works" className="py-20 px-4 bg-white">
             <div className="max-w-5xl mx-auto">
-              <SectionHeading eyebrow="Simple By Design" title="How Skylerb works" description="We find it. You book it. Simple." />
+              <SectionHeading eyebrow="Simple By Design" title={`How ${SITE_NAME} works`} description="We find it. You book it. Simple." />
               <HowItWorks />
             </div>
           </section>

@@ -14,6 +14,7 @@ import {
   Plane,
   ShieldCheck,
 } from "lucide-react";
+import { SITE_NAME } from "@/lib/siteConfig";
 
 export type AirlineSlug = "southwest" | "united";
 
@@ -66,8 +67,8 @@ export const MOBILE_AIRLINE_LANDINGS: Record<AirlineSlug, MobileAirlineLandingCo
     headline: "Southwest Airlines Fare Comparison",
     subheadline: "Fast. Friendly. Here for you.",
     intro:
-      "Compare Southwest routes and fares on Skylerb — an independent metasearch platform. We are not Southwest Airlines and do not issue tickets.",
-    ctaLabel: "Speak to a Skylerb Agent",
+      `Compare Southwest routes and fares on ${SITE_NAME} — an independent metasearch platform. We are not Southwest Airlines and do not issue tickets.`,
+    ctaLabel: `Speak to a ${SITE_NAME} Agent`,
     serviceGrid: [
       { icon: Ticket, label: "Compare Fares" },
       { icon: ArrowLeftRight, label: "Route Search" },
@@ -112,7 +113,7 @@ export const MOBILE_AIRLINE_LANDINGS: Record<AirlineSlug, MobileAirlineLandingCo
     headline: "United Airlines Flight Search & Comparison",
     subheadline: "Low-Cost, Easy, Reliable Booking",
     intro:
-      "Ready to compare United Airlines flights? Skylerb helps you search routes and fares in one place. We are independent — not United Airlines — and tickets are booked on partner sites.",
+      `Ready to compare United Airlines flights? ${SITE_NAME} helps you search routes and fares in one place. We are independent — not United Airlines — and tickets are booked on partner sites.`,
     ctaLabel: "Get United Fare Assistance",
     serviceGrid: [
       { icon: Clock, label: "24/7 Available" },
@@ -123,7 +124,7 @@ export const MOBILE_AIRLINE_LANDINGS: Record<AirlineSlug, MobileAirlineLandingCo
     helpCards: [
       {
         title: "New booking",
-        description: "Speak to a Skylerb agent to compare United flight options.",
+        description: `Speak to a ${SITE_NAME} agent to compare United flight options.`,
         icon: Phone,
         tone: "bg-emerald-50 border-emerald-100 text-emerald-800",
       },
@@ -143,7 +144,7 @@ export const MOBILE_AIRLINE_LANDINGS: Record<AirlineSlug, MobileAirlineLandingCo
     listItems: [
       {
         title: "Compare United fares",
-        description: "Live agents help you search routes and view partner pricing on Skylerb.",
+        description: `Live agents help you search routes and view partner pricing on ${SITE_NAME}.`,
         icon: Plane,
         tone: "bg-emerald-500",
       },

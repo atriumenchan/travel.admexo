@@ -2,7 +2,7 @@
 // Central place for support-contact details shown site-wide.
 // ---------------------------------------------------------------------------
 
-export const SITE_NAME = "Skylerb";
+export const SITE_NAME = "SkyLerb";
 export const SITE_DOMAIN = "skylerb.com";
 export const SITE_URL = "https://travel-admexo.vercel.app";
 export const SITE_TAGLINE = "Low-Cost, Easy, Reliable Booking";
@@ -16,7 +16,7 @@ export const PARTNERS_EMAIL = "partners@skylerb.com";
 export const CAREERS_EMAIL = "careers@skylerb.com";
 
 export const OFFICE_ADDRESS_LINES = [
-  "Skylerb.com",
+  "skylerb.com",
   "5830 East 2nd Street",
   "Wyoming, 82609, USA",
 ] as const;
