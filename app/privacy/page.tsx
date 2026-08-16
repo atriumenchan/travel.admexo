@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ContentPage, { Section } from "@/components/ContentPage";
+import ContentPage, { Section, BulletList, Callout } from "@/components/ContentPage";
 import { SITE_NAME, SUPPORT_EMAIL, LEGAL_EFFECTIVE_DATE } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <ContentPage title="Privacy Policy" description={`Last updated: ${LEGAL_EFFECTIVE_DATE}`}>
+    <ContentPage title="Privacy Policy" description={`Last updated: ${LEGAL_EFFECTIVE_DATE}`} wide>
       <Section title="Introduction">
         <p>
           This Privacy Policy governs the privacy practices of skylerb.com, including its subdomains and associated
@@ -20,20 +20,33 @@ export default function PrivacyPage() {
 
       <Section title="What data we collect">
         <p>
-          <strong>Information you provide.</strong> Email address, first name, and any details you include when
-          contacting us, requesting help, or (if offered) subscribing to alerts.
+          <strong>Information you provide.</strong> Email address, name, phone if you call or write us, and any
+          details you include when contacting support, requesting help, reporting bugs, or subscribing to alerts.
+        </p>
+        <p>
+          <strong>Search activity.</strong> Routes, dates, and airports you enter may be processed to display results
+          and improve the service. We do not receive your passport or payment card on SkyLerb — those are entered on
+          partner booking sites.
         </p>
         <p>
           <strong>Automatic collection.</strong> Technical and usage data such as cookies, device information, IP
-          address, referral URLs, browser type, pages viewed, search activity, and log data.
+          address, referral URLs, browser type, pages viewed, click paths, approximate location derived from IP,
+          and server log data.
         </p>
       </Section>
 
-      <Section title="Cookies">
+      <Section title="How we use cookies & similar tech">
+        <BulletList
+          items={[
+            "Essential cookies — keep the site functioning and remember basic preferences.",
+            "Analytics — understand which pages are used and fix performance issues.",
+            "Affiliate / partner tracking — attribute referrals when you click through to book.",
+            "Advertising — may support relevant ads or retargeting where enabled and lawful.",
+          ]}
+        />
         <p>
-          We may use cookies to remember searches and preferences, understand traffic, improve performance, and
-          support advertising or affiliate tracking. You can manage cookies in your browser; disabling some cookies
-          may limit Website features.
+          You can block or delete cookies in your browser settings. Some features — especially search widgets and
+          partner redirects — may not work correctly if essential cookies are disabled.
         </p>
       </Section>
 
@@ -91,11 +104,30 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="Third-party sites">
+      <Section title="Third-party sites & booking partners">
         <p>
-          Links to airlines and other sites are for convenience. Their privacy practices are their own—review their
-          policies before sharing information or booking.
+          When you click a flight offer, you leave {SITE_NAME}. Airlines, OTAs, and payment processors collect data
+          under their own privacy policies. We encourage you to read those policies before entering personal or payment
+          information.
         </p>
+        <Callout>
+          <p>
+            Example: if you book on an airline website after leaving SkyLerb, that airline may store your frequent
+            flyer number, passport details, and payment method according to its policy — not ours.
+          </p>
+        </Callout>
+      </Section>
+
+      <Section title="Your choices — practical steps">
+        <BulletList
+          items={[
+            "Marketing emails — use the unsubscribe link in any promotional message we send.",
+            "Cookies — adjust browser settings or use industry opt-out tools where available.",
+            "Location — disable location permissions in device settings if you do not want IP-based estimates.",
+            "Access / deletion requests — email support@skylerb.com with subject “Privacy request” and enough detail to verify you.",
+            "Do Not Sell / Share — where applicable law provides opt-out rights, contact us and we will respond per law.",
+          ]}
+        />
       </Section>
 
       <Section title="Updates & contact">

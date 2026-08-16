@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ContentPage, { Section } from "@/components/ContentPage";
+import ContentPage, { Section, BulletList, Callout } from "@/components/ContentPage";
 import { SITE_NAME, SUPPORT_EMAIL, LEGAL_EFFECTIVE_DATE } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <ContentPage title="Terms of Service" description={`Last updated: ${LEGAL_EFFECTIVE_DATE}`}>
+    <ContentPage title="Terms of Service" description={`Last updated: ${LEGAL_EFFECTIVE_DATE}`} wide>
       <Section title="Agreement">
         <p>
           These Terms of Service govern skylerb.com and related services (the &quot;Website&quot;) operated by{" "}
@@ -64,6 +64,39 @@ export default function TermsPage() {
           the fullest extent permitted by law, {SITE_NAME} disclaims responsibility for third-party content, offers,
           and bookings, and is not liable for indirect or consequential damages arising from use of the Website or
           third-party services.
+        </p>
+      </Section>
+
+      <Section title="User responsibilities">
+        <BulletList
+          items={[
+            "Use the Website for lawful personal flight comparison only.",
+            "Verify final price, itinerary, and fare rules on the partner site before paying.",
+            "Provide accurate information when contacting support.",
+            "Do not scrape, overload, or reverse engineer the Website except where law permits.",
+            "Do not imply you represent SkyLerb or any airline when using information from the site.",
+          ]}
+        />
+      </Section>
+
+      <Section title="Affiliate disclosure">
+        <p>
+          {SITE_NAME} may receive compensation from partners when users click links or complete bookings. Partner
+          compensation helps fund the comparison service. It does not change the price set by the seller at checkout.
+          See site disclaimers and our Help Center for how redirects work.
+        </p>
+      </Section>
+
+      <Section title="Dispute resolution">
+        <Callout tone="warn">
+          <p>
+            Booking disputes — refunds, schedule changes, baggage — must be resolved with the airline or travel agency
+            that issued your ticket. {SITE_NAME} is not a party to your ticket contract.
+          </p>
+        </Callout>
+        <p>
+          For disputes about the Website itself, contact {SUPPORT_EMAIL} first so we can try to resolve the issue
+          informally.
         </p>
       </Section>
 

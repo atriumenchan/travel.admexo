@@ -1,109 +1,145 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import ContentPage, { Section, Steps, Callout, BulletList } from "@/components/ContentPage";
+import ContentPage, { Section, Steps, Callout, BulletList, InfoTable } from "@/components/ContentPage";
 import { SITE_NAME, SITE_TAGLINE, PARTNERS_EMAIL, SUPPORT_EMAIL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Partners",
-  description: `Partner with ${SITE_NAME} — travel affiliates, data providers, and distribution.`,
+  description: `Partner with ${SITE_NAME} — airlines, OTAs, affiliates, and travel technology.`,
 };
 
 export default function PartnersPage() {
   return (
     <ContentPage
       title="Partners"
-      description={`Work with ${SITE_NAME} to reach travelers comparing flights.`}
+      description={`Distribution, data, and affiliate partnerships with ${SITE_NAME}. ${SITE_TAGLINE}.`}
       wide
     >
       <Section title="Partner with SkyLerb">
         <p>
-          {SITE_NAME} connects travelers comparing flights with airlines and travel providers where bookings are
-          completed. {SITE_TAGLINE}. We are interested in partnerships that improve search quality, coverage, and
-          transparency for users.
+          {SITE_NAME} sits between travelers researching flights and the sellers who issue tickets. We send
+          qualified click-through traffic from comparison searches to airline and OTA booking flows. Partners benefit
+          from intent-rich users; users benefit from transparent comparison before they commit.
+        </p>
+        <p>
+          We prioritize partnerships that improve fare coverage, landing-page quality, and honest consumer
+          expectations — not bait-and-switch pricing or impersonation branding.
         </p>
       </Section>
 
       <Section title="Partnership types">
-        <div className="space-y-4 not-prose">
-          <div className="rounded-xl border border-slate-100 p-4">
-            <p className="font-bold text-slate-900 mb-2">Travel & affiliate partners</p>
-            <p className="text-sm text-slate-600">
-              Airlines, OTAs, metasearch feeds, and booking platforms that want qualified click-through traffic from
-              comparison searches.
-            </p>
-          </div>
-          <div className="rounded-xl border border-slate-100 p-4">
-            <p className="font-bold text-slate-900 mb-2">Data & technology</p>
-            <p className="text-sm text-slate-600">
-              Fare data, airport content, analytics, fraud prevention, hosting, and infrastructure that keeps search
-              fast and reliable.
-            </p>
-          </div>
-          <div className="rounded-xl border border-slate-100 p-4">
-            <p className="font-bold text-slate-900 mb-2">Marketing & content</p>
-            <p className="text-sm text-slate-600">
-              Co-marketing, route campaigns, and educational content — as long as messaging stays accurate about how
-              booking works.
-            </p>
-          </div>
-        </div>
-      </Section>
-
-      <Section title="What we look for">
-        <BulletList
-          items={[
-            "Accurate, timely fare and availability data.",
-            "Clear landing pages where users complete booking after click-through.",
-            "Transparent fees and fare rules on the provider side.",
-            "Reliable tracking and reporting for partner programs.",
-            "Alignment with honest metasearch practices — no bait-and-switch pricing.",
+        <InfoTable
+          rows={[
+            {
+              label: "Affiliate / referral",
+              value: "Trackable links from SkyLerb search results to your booking site; commission on qualified conversions per program terms.",
+            },
+            {
+              label: "Airline & OTA distribution",
+              value: "Feed flight inventory, schedules, and pricing into comparison results where technically supported.",
+            },
+            {
+              label: "Metasearch / API integrations",
+              value: "Structured data exchange for routes, availability snapshots, and redirect deep links.",
+            },
+            {
+              label: "Technology vendors",
+              value: "Hosting, analytics, fraud prevention, airport data, payment-adjacent tools that improve reliability.",
+            },
+            {
+              label: "Co-marketing",
+              value: "Route campaigns and educational content — must comply with disclosure and non-impersonation rules.",
+            },
           ]}
         />
       </Section>
 
-      <Section title="How to pitch a partnership">
+      <Section title="What we look for in partners">
+        <BulletList
+          items={[
+            "Accurate fare and schedule data with reasonable refresh intervals.",
+            "Landing pages that match the price and itinerary shown before redirect where possible.",
+            "Clear checkout with full tax and fee breakdown before payment.",
+            "Customer support channels for post-booking issues — travelers must not be stranded.",
+            "Reliable tracking, reporting, and good-faith dispute resolution on referrals.",
+            "Respect for consumer protection norms — no fake airline branding on partner pages.",
+          ]}
+        />
+      </Section>
+
+      <Section title="What partners can expect from SkyLerb">
+        <BulletList
+          items={[
+            "Neutral comparison placement subject to relevance and program terms — not pay-to-hide competitors.",
+            "Disclosure that SkyLerb may earn compensation — visible to consumers site-wide.",
+            "Mobile and desktop search entry points plus route-specific landing pages where published.",
+            "Good-faith communication on tracking anomalies or feed quality issues.",
+          ]}
+        />
+      </Section>
+
+      <Section title="Integration checklist (technical partners)">
         <Steps
           items={[
-            "Email partners@skylerb.com with your company name and partnership type.",
-            "Describe your product, geographic coverage, and integration options (API, affiliate link, white-label, etc.).",
-            "Share expected traffic quality, markets, and any commercial model you propose.",
-            "Include a contact name, role, and best way to schedule a follow-up call.",
+            "Provide API docs, sandbox credentials, or affiliate link parameters.",
+            "Define supported markets, currencies, and route coverage.",
+            "Agree on click attribution window and conversion validation rules.",
+            "Test redirect URLs for major device/browser combinations.",
+            "Establish a contact for feed outages and pricing discrepancies.",
+            "Review consumer-facing disclaimer language on landing pages.",
+          ]}
+        />
+      </Section>
+
+      <Section title="How to submit a partnership inquiry">
+        <Steps
+          items={[
+            "Email partners@skylerb.com with company name and partnership type in the subject line.",
+            "Describe your product, geographic coverage, and integration method (API, affiliate network, direct).",
+            "Share expected volume, commercial model, and sample deep link or feed spec.",
+            "Include primary contact, role, and timezone for a follow-up call.",
           ]}
         />
         <Callout>
           <p>
-            Send inquiries to{" "}
+            <strong>Partnerships inbox:</strong>{" "}
             <a href={`mailto:${PARTNERS_EMAIL}`} className="text-brand-600 hover:underline font-bold">
               {PARTNERS_EMAIL}
             </a>
-            . We review every message — response times vary by volume.
+          </p>
+          <p className="pt-2 text-sm">
+            We read every message. Response time depends on volume and fit — high-quality, complete pitches move
+            faster.
           </p>
         </Callout>
       </Section>
 
-      <Section title="Traveler support">
+      <Section title="Not a partnership inbox">
+        <Callout tone="warn">
+          <p>
+            Travelers needing search help or ticket changes should not email partners@skylerb.com. Use{" "}
+            <Link href="/contact">Contact Us</Link> or{" "}
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-brand-600 hover:underline">
+              {SUPPORT_EMAIL}
+            </a>{" "}
+            instead. For airline-specific booking issues, contact the issuer on your confirmation.
+          </p>
+        </Callout>
+      </Section>
+
+      <Section title="Learn more">
         <p>
-          If you are a traveler who needs help with a search or an existing booking, this is not the right inbox.
-          Please use{" "}
-          <Link href="/contact" className="text-brand-600 hover:underline font-medium">
-            Contact Us
-          </Link>{" "}
-          or email{" "}
-          <a href={`mailto:${SUPPORT_EMAIL}`} className="text-brand-600 hover:underline font-medium">
-            {SUPPORT_EMAIL}
-          </a>{" "}
-          instead.
-        </p>
-        <p>
-          Read more{" "}
           <Link href="/about" className="text-brand-600 hover:underline font-medium">
-            about {SITE_NAME}
-          </Link>{" "}
-          or visit the{" "}
-          <Link href="/help" className="text-brand-600 hover:underline font-medium">
-            Help Center
+            About {SITE_NAME}
           </Link>
-          .
+          {" · "}
+          <Link href="/press" className="text-brand-600 hover:underline font-medium">
+            Press
+          </Link>
+          {" · "}
+          <Link href="/terms" className="text-brand-600 hover:underline font-medium">
+            Terms of Service
+          </Link>
         </p>
       </Section>
     </ContentPage>

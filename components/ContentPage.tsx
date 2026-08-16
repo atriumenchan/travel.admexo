@@ -90,3 +90,47 @@ export function BulletList({ items }: { items: string[] }) {
     </ul>
   );
 }
+
+export function Scenario({
+  title,
+  problem,
+  solution,
+}: {
+  title: string;
+  problem: string;
+  solution: ReactNode;
+}) {
+  return (
+    <div className="rounded-xl border border-slate-200 overflow-hidden not-prose">
+      <div className="bg-slate-100 px-4 py-2.5 font-bold text-slate-900 text-sm">{title}</div>
+      <div className="p-4 space-y-3 text-sm text-slate-600 leading-relaxed">
+        <p>
+          <strong className="text-slate-800">Situation:</strong> {problem}
+        </p>
+        <div>
+          <strong className="text-slate-800 block mb-1">What to do:</strong>
+          {solution}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function InfoTable({ rows }: { rows: { label: string; value: string }[] }) {
+  return (
+    <div className="overflow-x-auto not-prose rounded-xl border border-slate-100">
+      <table className="w-full text-sm">
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.label} className="border-b border-slate-100 last:border-0">
+              <th className="text-left font-semibold text-slate-900 bg-slate-50 px-4 py-3 w-2/5 align-top">
+                {row.label}
+              </th>
+              <td className="px-4 py-3 text-slate-600 leading-relaxed">{row.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

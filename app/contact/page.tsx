@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Phone, Mail, MapPin, Clock, MessageCircle, AlertCircle, CheckCircle2 } from "lucide-react";
 import SiteDisclaimer from "@/components/SiteDisclaimer";
 import MobileSupportLanding from "@/components/MobileSupportLanding";
-import ContentPage, { Section, Steps, Callout, BulletList } from "@/components/ContentPage";
+import ContentPage, { Section, Steps, Callout, BulletList, Scenario, InfoTable } from "@/components/ContentPage";
+import { BOOKING_SCENARIOS } from "@/lib/helpContent";
 import {
   SITE_NAME,
   SITE_TAGLINE,
@@ -12,11 +13,14 @@ import {
   SUPPORT_PHONE_TEL,
   SUPPORT_EMAIL,
   OFFICE_ADDRESS_LINES,
+  PRESS_EMAIL,
+  PARTNERS_EMAIL,
+  CAREERS_EMAIL,
 } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Contact Us",
-  description: `Contact ${SITE_NAME} support. Independent flight comparison help — we are not an airline and do not sell tickets.`,
+  description: `Contact ${SITE_NAME} support — phone, email, mailing address, and guides for every type of inquiry.`,
 };
 
 export default function ContactPage() {
@@ -24,48 +28,83 @@ export default function ContactPage() {
     <>
       <MobileSupportLanding />
 
-      {/* Desktop — expanded contact page */}
       <div className="hidden md:block">
         <ContentPage
           title="Contact Us"
-          description={`${SITE_TAGLINE} — get help using ${SITE_NAME} to search and compare flights.`}
+          description={`Reach ${SITE_NAME} for search help, website support, and partnership routing. ${SITE_TAGLINE}.`}
           wide
         >
-          <Callout title="Important">
+          <Callout title="Read this first">
             <p>
-              {SITE_NAME} is an independent flight metasearch website. We help you <strong>compare</strong> fares.
-              We do not sell tickets, change reservations, or process refunds for flights booked elsewhere.
+              {SITE_NAME} is an independent flight <strong>comparison</strong> website. We help you find and compare
+              fares. Tickets are sold, changed, and refunded only by the airline or travel agency on your confirmation —
+              not by us.
             </p>
           </Callout>
 
-          <Section title="When to contact SkyLerb">
-            <p>Reach out when you need help with our website or comparison process:</p>
+          <Section title="Choose the right channel">
+            <InfoTable
+              rows={[
+                {
+                  label: "Help using the search tool",
+                  value: `Call ${SUPPORT_PHONE_DISPLAY} or email ${SUPPORT_EMAIL}`,
+                },
+                {
+                  label: "Change / cancel existing ticket",
+                  value: "Contact the airline or OTA on your confirmation — see routing table below",
+                },
+                {
+                  label: "Press & media",
+                  value: PRESS_EMAIL,
+                },
+                {
+                  label: "Partnerships & affiliates",
+                  value: PARTNERS_EMAIL,
+                },
+                {
+                  label: "Jobs & careers",
+                  value: CAREERS_EMAIL,
+                },
+                {
+                  label: "Legal / privacy requests",
+                  value: `${SUPPORT_EMAIL} with subject line “Privacy request”`,
+                },
+              ]}
+            />
+          </Section>
+
+          <Section title="When to contact SkyLerb vs the airline">
             <div className="grid sm:grid-cols-2 gap-4 not-prose">
-              <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
+              <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-5">
                 <p className="font-bold text-emerald-900 flex items-center gap-2 mb-3">
-                  <CheckCircle2 className="w-4 h-4" /> We can help with
+                  <CheckCircle2 className="w-5 h-5" /> Contact {SITE_NAME} for
                 </p>
                 <BulletList
                   items={[
-                    "Searching for flights and reading comparison results.",
-                    "Understanding how redirects to airline and partner sites work.",
-                    "Technical issues with the search tool or pages on skylerb.com.",
-                    "General questions about what SkyLerb is and how we operate.",
-                    "Feedback about the site experience.",
+                    "How to run a search — airports, dates, passengers, round trip vs one-way.",
+                    "Understanding comparison results and what happens when you click an offer.",
+                    "The search widget not loading, blank results, or redirect errors on skylerb.com.",
+                    "Questions about our role — what we are and are not (not an airline, not a ticket seller).",
+                    "Feedback on the website, mobile experience, or content accuracy.",
+                    "Pointing you to the correct airline or agency if you are unsure who sold your ticket.",
+                    "Privacy questions about data on SkyLerb — see also our Privacy Policy.",
                   ]}
                 />
               </div>
-              <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-4">
+              <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-5">
                 <p className="font-bold text-amber-900 flex items-center gap-2 mb-3">
-                  <AlertCircle className="w-4 h-4" /> Contact the airline or agency instead for
+                  <AlertCircle className="w-5 h-5" /> Contact the airline or agency for
                 </p>
                 <BulletList
                   items={[
-                    "Changing or canceling an existing booking.",
-                    "Refunds, vouchers, or travel credits.",
-                    "Seat selection, baggage, or special assistance on a ticket you already bought.",
-                    "Flight delays, missed connections, or day-of-travel problems.",
-                    "Payment disputes for a completed booking — use the merchant on your receipt.",
+                    "Changing dates, times, routes, or passenger names on a purchased ticket.",
+                    "Cancellations, refunds, vouchers, and travel credits.",
+                    "Seat selection, upgrades, and baggage purchases after booking.",
+                    "Check-in, boarding passes, TSA issues, and gate changes.",
+                    "Delayed, canceled, or missed flights — rebooking and compensation.",
+                    "Lost, delayed, or damaged checked baggage.",
+                    "Frequent flyer mileage posting and status benefits.",
+                    "Payment disputes — start with the merchant on your card statement.",
                   ]}
                 />
               </div>
@@ -73,109 +112,220 @@ export default function ContactPage() {
           </Section>
 
           <Section title="How to reach us">
-            <div className="grid sm:grid-cols-2 gap-5 not-prose">
+            <div className="grid sm:grid-cols-2 gap-5 not-prose mb-5">
               <a
                 href={`tel:${SUPPORT_PHONE_TEL}`}
                 className="rounded-2xl border border-brand-100 bg-brand-50 p-6 hover:shadow-md transition-shadow group"
               >
-                <Phone className="w-6 h-6 text-brand-600 mb-3" />
-                <p className="font-bold text-slate-900 mb-1">Call support</p>
+                <Phone className="w-7 h-7 text-brand-600 mb-3" />
+                <p className="font-bold text-slate-900 mb-1">Phone support</p>
                 <p className="text-2xl font-bold text-brand-700 group-hover:underline">{SUPPORT_PHONE_DISPLAY}</p>
-                <p className="text-xs text-slate-500 mt-2">Best for urgent search or website questions.</p>
+                <p className="text-sm text-slate-600 mt-3 leading-relaxed">
+                  Best when you need live help comparing routes or the site is not working. Have your origin,
+                  destination, and travel dates ready.
+                </p>
               </a>
               <a
                 href={`mailto:${SUPPORT_EMAIL}`}
                 className="rounded-2xl border border-slate-100 bg-white p-6 hover:shadow-md transition-shadow group"
               >
-                <Mail className="w-6 h-6 text-brand-600 mb-3" />
-                <p className="font-bold text-slate-900 mb-1">Email us</p>
+                <Mail className="w-7 h-7 text-brand-600 mb-3" />
+                <p className="font-bold text-slate-900 mb-1">Email support</p>
                 <p className="text-lg font-bold text-brand-700 group-hover:underline break-all">{SUPPORT_EMAIL}</p>
-                <p className="text-xs text-slate-500 mt-2">Include screenshots and travel dates if reporting a bug.</p>
+                <p className="text-sm text-slate-600 mt-3 leading-relaxed">
+                  Best for screenshots, detailed bug reports, and non-urgent questions. We reply with steps you can
+                  follow.
+                </p>
               </a>
             </div>
 
-            <div className="rounded-2xl bg-slate-50 border border-slate-100 p-5 mt-4 not-prose">
+            <div className="rounded-2xl bg-slate-50 border border-slate-100 p-5 not-prose">
               <p className="font-bold text-slate-900 mb-2 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-brand-600" /> Mailing address
               </p>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed mb-2">
                 {OFFICE_ADDRESS_LINES.map((line) => (
                   <span key={line} className="block">
                     {line}
                   </span>
                 ))}
               </p>
+              <p className="text-xs text-slate-500">
+                Postal mail is not the fastest way to get search help — phone or email is better for travelers.
+              </p>
             </div>
           </Section>
 
-          <Section title="What to include in your message">
+          <Section title="Sample email — website / search issue">
+            <Callout>
+              <p className="font-mono text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{`Subject: Search help — [Origin] to [Destination] on [Date]
+
+Hi SkyLerb team,
+
+I need help with: [describe issue — e.g. results not loading / wrong airport / redirect failed]
+
+Route searched:
+- From: [airport or city]
+- To: [airport or city]
+- Dates: [departure and return if any]
+- Passengers: [number]
+
+Device: [e.g. iPhone 15, Safari]
+What I tried: [refreshed page, disabled ad blocker, etc.]
+
+[Attach screenshot if possible]
+
+Thank you,
+[Your name]`}</p>
+            </Callout>
+          </Section>
+
+          <Section title="Sample email — existing booking (we will route you)">
+            <Callout tone="warn">
+              <p className="font-mono text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{`Subject: Need help finding who to contact — existing booking
+
+Hi SkyLerb team,
+
+I booked a flight after comparing on SkyLerb but need to [change / cancel / refund].
+
+I am not sure who to contact. Here is what I have:
+- Airline shown on itinerary: [name]
+- Seller on card statement: [merchant name]
+- Confirmation / PNR: [if you have it]
+- Travel dates: [dates]
+
+Can you tell me who issued the ticket?
+
+Thank you,
+[Your name]`}</p>
+              <p className="pt-3 text-sm not-mono">
+                We cannot modify the booking, but we can explain whether to start with the airline or the OTA based on
+                your receipt and confirmation.
+              </p>
+            </Callout>
+          </Section>
+
+          <Section title="Phone call — what to say">
             <Steps
               items={[
-                "Tell us whether you need help with a new search or an existing ticket (for existing tickets, we can only guide you to the right provider).",
-                "Share origin, destination, and dates you searched.",
-                "Describe what happened and what you expected instead.",
-                "Add your browser, device, and screenshots if something on the site did not work.",
-                "For booking issues after payment, include the airline or agency name from your confirmation — not just SkyLerb.",
+                "Say you need help with SkyLerb flight comparison (not an airline change).",
+                "Give origin, destination, and dates you want to search.",
+                "Explain the issue — no results, confusing price, site error, or how redirects work.",
+                "If about an existing ticket, say you know SkyLerb cannot change it — you need the correct contact for the issuer.",
+                "Have email ready if we need to send follow-up steps or links to the Help Center.",
               ]}
             />
           </Section>
 
-          <Section title="Response times">
+          <Section title="Response times & availability">
             <BulletList
               items={[
-                "Phone: we aim to answer live when agents are available. If you reach voicemail, leave your callback number and a short summary.",
-                "Email: most messages receive a reply within 1–2 business days. Complex technical reports may take longer.",
-                "We do not have access to airline reservation systems — we cannot look up your ticket by name alone.",
+                "Phone: live agents when available. If you reach voicemail, leave callback number, route, and a short summary.",
+                "Email: typical reply within 1–2 business days; complex issues may take longer.",
+                "We do not operate airline counters or airport desks.",
+                "We cannot expedite airline refunds or override fare rules on your behalf.",
+                "For step-by-step guides on dozens of topics, use the Help Center — linked below.",
               ]}
             />
-            <p className="flex items-center gap-2 text-sm pt-2">
+            <p className="flex items-center gap-2 text-sm pt-3">
               <Clock className="w-4 h-4 text-brand-600 shrink-0" />
-              <span>
-                For step-by-step guides, visit our{" "}
-                <Link href="/help" className="text-brand-600 hover:underline font-medium">
-                  Help Center
-                </Link>
-                .
-              </span>
+              <Link href="/help" className="text-brand-600 hover:underline font-medium">
+                Open the full Help Center
+              </Link>
+            </p>
+          </Section>
+
+          <Section title="Common situations — quick answers">
+            <div className="space-y-4 not-prose">
+              {BOOKING_SCENARIOS.slice(0, 4).map((s) => (
+                <Scenario
+                  key={s.title}
+                  title={s.title}
+                  problem={s.problem}
+                  solution={<Steps items={s.steps} />}
+                />
+              ))}
+            </div>
+            <p className="pt-3">
+              More scenarios — price changes, missed flights, baggage, duplicates — in the{" "}
+              <Link href="/help" className="text-brand-600 hover:underline font-medium">
+                Help Center
+              </Link>
+              .
             </p>
           </Section>
 
           <Section title="Other departments">
             <div className="space-y-3 not-prose">
-              <p className="flex items-start gap-3 rounded-xl border border-slate-100 p-4">
+              <div className="flex items-start gap-3 rounded-xl border border-slate-100 p-4">
                 <MessageCircle className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-slate-900">Press & media</strong> — see our{" "}
-                  <Link href="/press">Press page</Link> for media contact details.
-                </span>
-              </p>
-              <p className="flex items-start gap-3 rounded-xl border border-slate-100 p-4">
+                <div>
+                  <p className="font-bold text-slate-900">Press & media</p>
+                  <p className="text-sm text-slate-600 mt-1">
+                    Interview requests, fact-checking, company background —{" "}
+                    <a href={`mailto:${PRESS_EMAIL}`} className="text-brand-600 hover:underline">
+                      {PRESS_EMAIL}
+                    </a>
+                    . See <Link href="/press">Press</Link>.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-xl border border-slate-100 p-4">
                 <MessageCircle className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-slate-900">Partnerships</strong> — travel partners and affiliates should use
-                  the <Link href="/partners">Partners page</Link>.
-                </span>
-              </p>
-              <p className="flex items-start gap-3 rounded-xl border border-slate-100 p-4">
+                <div>
+                  <p className="font-bold text-slate-900">Partnerships</p>
+                  <p className="text-sm text-slate-600 mt-1">
+                    Airlines, OTAs, data feeds, affiliate programs —{" "}
+                    <a href={`mailto:${PARTNERS_EMAIL}`} className="text-brand-600 hover:underline">
+                      {PARTNERS_EMAIL}
+                    </a>
+                    . See <Link href="/partners">Partners</Link>.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-xl border border-slate-100 p-4">
                 <MessageCircle className="w-5 h-5 text-brand-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-slate-900">Careers</strong> — hiring inquiries go to{" "}
-                  <Link href="/careers">Careers</Link>.
-                </span>
-              </p>
+                <div>
+                  <p className="font-bold text-slate-900">Careers</p>
+                  <p className="text-sm text-slate-600 mt-1">
+                    Hiring and general applications —{" "}
+                    <a href={`mailto:${CAREERS_EMAIL}`} className="text-brand-600 hover:underline">
+                      {CAREERS_EMAIL}
+                    </a>
+                    . See <Link href="/careers">Careers</Link>.
+                  </p>
+                </div>
+              </div>
             </div>
           </Section>
 
-          <Section title="About SkyLerb">
+          <Section title={`About ${SITE_NAME}`}>
             <p>
-              {SITE_NAME} helps travelers compare flight options from multiple airlines and booking sites in one
-              search. We built it to save time — open one place, scan routes and prices, then book where the fare is
-              sold. {SITE_TAGLINE}.
+              {SITE_NAME} aggregates flight offers so you can compare prices and schedules before booking on a partner
+              site. We focus on clarity: show options, explain redirects, and never pretend to be an airline.{" "}
+              {SITE_TAGLINE}.
             </p>
-            <p>
-              Learn more on our <Link href="/about">About page</Link>.
+            <BulletList
+              items={[
+                "Free to search — no SkyLerb account required for basic comparison.",
+                "Bookings completed on third-party sites subject to their terms.",
+                "Affiliate relationships may compensate us — see Terms and site disclaimer.",
+              ]}
+            />
+            <p className="pt-2">
+              <Link href="/about" className="text-brand-600 hover:underline font-medium">
+                About {SITE_NAME}
+              </Link>
+              {" · "}
+              <Link href="/terms" className="text-brand-600 hover:underline font-medium">
+                Terms of Service
+              </Link>
+              {" · "}
+              <Link href="/privacy" className="text-brand-600 hover:underline font-medium">
+                Privacy Policy
+              </Link>
             </p>
-            <p className="text-xs text-slate-400 pt-2">{SITE_DISCLAIMER}</p>
+            <p className="text-xs text-slate-400 pt-4">{SITE_DISCLAIMER}</p>
           </Section>
         </ContentPage>
 
