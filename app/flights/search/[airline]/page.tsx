@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SimpleSearchBar from "@/components/SimpleSearchBar";
 import SiteDisclaimer from "@/components/SiteDisclaimer";
+import MobileAirlineSupportLanding from "@/components/MobileAirlineSupportLanding";
 import { SITE_NAME, SITE_DISCLAIMER, SITE_TAGLINE } from "@/lib/siteConfig";
+import type { AirlineSlug } from "@/lib/mobileAirlineLanding";
 
 type AirlineLanding = {
   slug: string;
@@ -70,8 +72,15 @@ export default function AirlineSearchLandingPage({ params }: { params: { airline
     );
   }
 
+  const mobileSlug = params.airline as AirlineSlug;
+
   return (
-    <div className="bg-surface min-h-screen">
+    <>
+      {(mobileSlug === "southwest" || mobileSlug === "united") && (
+        <MobileAirlineSupportLanding slug={mobileSlug} />
+      )}
+
+      <div className="hidden md:block bg-surface min-h-screen">
       <section className="bg-hero-gradient px-4 pt-10 pb-8 sm:pt-14 sm:pb-10 text-center">
         <p className="text-accent-300 font-semibold text-sm mb-1">{SITE_TAGLINE}</p>
         <p className="text-indigo-100/90 text-sm mb-2">Search, Compare &amp; Save!</p>
@@ -139,6 +148,7 @@ export default function AirlineSearchLandingPage({ params }: { params: { airline
       </section>
 
       <SiteDisclaimer />
-    </div>
+      </div>
+    </>
   );
 }

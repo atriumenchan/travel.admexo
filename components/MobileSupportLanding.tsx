@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import HideChromeOnMobile from "@/components/HideChromeOnMobile";
 import {
   Phone,
   Mail,
@@ -56,6 +56,7 @@ const HELP_ITEMS = [
 export default function MobileSupportLanding() {
   return (
     <div className="md:hidden bg-white text-slate-900">
+      <HideChromeOnMobile />
       {/* Top availability bar */}
       <div className="bg-brand-950 text-white px-4 py-2.5 flex items-center justify-center gap-2 text-xs font-medium">
         <Phone className="w-3.5 h-3.5 text-accent-300" />
@@ -69,9 +70,11 @@ export default function MobileSupportLanding() {
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-hero-gradient">
-        <div className="relative h-44">
-          <Image src="/support/support-plane.jpg" alt="" fill className="object-cover opacity-65" priority />
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-950/30 via-brand-950/65 to-brand-950" />
+        <div className="relative h-44 bg-hero-gradient">
+          <div className="absolute inset-0 flex items-center justify-center opacity-15">
+            <Plane className="w-36 h-36 text-white rotate-[-10deg]" />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-brand-950/20 via-brand-950/55 to-brand-950" />
         </div>
 
         <div className="relative -mt-16 px-5 pb-8">
