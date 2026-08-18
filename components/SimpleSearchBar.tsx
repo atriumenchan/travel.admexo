@@ -42,9 +42,9 @@ function formatDisplayDate(iso: string) {
  * (`/?flightSearch=...`) so live results still come from the WL widget.
  */
 export default function SimpleSearchBar() {
-  const [origin, setOrigin] = useState("NYC");
+  const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
-  const [originLabel, setOriginLabel] = useState("New York");
+  const [originLabel, setOriginLabel] = useState("");
   const [destLabel, setDestLabel] = useState("");
   const [departDate, setDepartDate] = useState(defaultDepartDate);
   const [returnDate, setReturnDate] = useState(defaultReturnDate);
@@ -173,7 +173,7 @@ export default function SimpleSearchBar() {
                 setShowOrigin(true);
               }}
               onFocus={() => setShowOrigin(true)}
-              placeholder="Origin"
+              placeholder="From"
               className="flex-1 min-w-0 bg-transparent text-sm sm:text-[15px] font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-medium outline-none"
               autoComplete="off"
               required
@@ -201,7 +201,7 @@ export default function SimpleSearchBar() {
                 setShowDest(true);
               }}
               onFocus={() => setShowDest(true)}
-              placeholder="Destination"
+              placeholder="To"
               className="flex-1 min-w-0 bg-transparent text-sm sm:text-[15px] font-semibold text-slate-900 placeholder:text-slate-400 placeholder:font-medium outline-none"
               autoComplete="off"
               required

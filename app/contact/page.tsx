@@ -156,55 +156,6 @@ export default function ContactPage() {
             </div>
           </Section>
 
-          <Section title="Sample email — website / search issue">
-            <Callout>
-              <p className="font-mono text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{`Subject: Search help — [Origin] to [Destination] on [Date]
-
-Hi SkyLerb team,
-
-I need help with: [describe issue — e.g. results not loading / wrong airport / redirect failed]
-
-Route searched:
-- From: [airport or city]
-- To: [airport or city]
-- Dates: [departure and return if any]
-- Passengers: [number]
-
-Device: [e.g. iPhone 15, Safari]
-What I tried: [refreshed page, disabled ad blocker, etc.]
-
-[Attach screenshot if possible]
-
-Thank you,
-[Your name]`}</p>
-            </Callout>
-          </Section>
-
-          <Section title="Sample email — existing booking (we will route you)">
-            <Callout tone="warn">
-              <p className="font-mono text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{`Subject: Need help finding who to contact — existing booking
-
-Hi SkyLerb team,
-
-I booked a flight after comparing on SkyLerb but need to [change / cancel / refund].
-
-I am not sure who to contact. Here is what I have:
-- Airline shown on itinerary: [name]
-- Seller on card statement: [merchant name]
-- Confirmation / PNR: [if you have it]
-- Travel dates: [dates]
-
-Can you tell me who issued the ticket?
-
-Thank you,
-[Your name]`}</p>
-              <p className="pt-3 text-sm not-mono">
-                We cannot modify the booking, but we can explain whether to start with the airline or the OTA based on
-                your receipt and confirmation.
-              </p>
-            </Callout>
-          </Section>
-
           <Section title="Phone call — what to say">
             <Steps
               items={[
