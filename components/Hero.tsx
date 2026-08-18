@@ -6,6 +6,8 @@ import TravelpayoutsWidget from "@/components/TravelpayoutsWidget";
 import { buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { SITE_TAGLINE } from "@/lib/siteConfig";
 import { cn } from "@/lib/utils";
+import type { VisitorOrigin } from "@/lib/geoOrigin";
+import { FALLBACK_ORIGIN } from "@/lib/geoOrigin";
 
 const CHIPS = [
   { emoji: "🇬🇧", label: "London", price: "$412", code: "LHR" },
@@ -16,9 +18,10 @@ const CHIPS = [
 
 interface HeroProps {
   hasSearch: boolean;
+  origin?: VisitorOrigin;
 }
 
-export default function Hero({ hasSearch }: HeroProps) {
+export default function Hero({ hasSearch, origin = FALLBACK_ORIGIN }: HeroProps) {
   return (
     <section
       className={cn(
@@ -114,7 +117,7 @@ export default function Hero({ hasSearch }: HeroProps) {
           transition={{ duration: 0.7, delay: hasSearch ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="w-full max-w-7xl relative"
         >
-          <TravelpayoutsWidget hasSearch={hasSearch} />
+          <TravelpayoutsWidget hasSearch={hasSearch} originCode={origin.code} originCity={origin.city} />
         </motion.div>
 
         {!hasSearch && (
@@ -126,17 +129,19 @@ export default function Hero({ hasSearch }: HeroProps) {
               transition={{ delay: 0.5, duration: 0.6 }}
               className="flex flex-wrap items-center justify-center gap-3"
             >
-              {CHIPS.map((chip, i) => (
+              {CHIPS.filter((chip) => chip.code !== origin.code).map((chip, i) => (
                 <motion.a
                   key={chip.label}
-                  href={buildWidgetSearchPath("JFK", chip.code)}
+                  href={buildWidgetSearchPath(origin.code, chip.code)}
                   className="glass rounded-full px-4 py-2 flex items-center gap-2 text-sm text-white/90 hover:bg-white/15 transition-colors"
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 4 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-                  title={`Search flights to ${chip.label}`}
+                  title={`Search flights from ${origin.city} to ${chip.label}`}
                 >
                   <span>{chip.emoji}</span>
-                  <span className="font-medium">{chip.label}</span>
+                  <span className="font-medium">
+                    {origin.city} → {chip.label}
+                  </span>
                   <span className="text-accent-300 font-semibold">{chip.price}</span>
                 </motion.a>
               ))}

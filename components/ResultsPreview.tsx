@@ -6,6 +6,8 @@ import { RESULTS_PREVIEW, RESULTS_PREVIEW_ROUTE } from "@/lib/mockContent";
 import { buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
+import type { VisitorOrigin } from "@/lib/geoOrigin";
+import { FALLBACK_ORIGIN } from "@/lib/geoOrigin";
 
 const BADGE_STYLE: Record<string, "success" | "brand" | "accent"> = {
   Cheapest: "success",
@@ -13,8 +15,8 @@ const BADGE_STYLE: Record<string, "success" | "brand" | "accent"> = {
   Fastest: "accent",
 };
 
-export default function ResultsPreview() {
-  const searchHref = buildWidgetSearchPath(RESULTS_PREVIEW_ROUTE.origin, RESULTS_PREVIEW_ROUTE.destination);
+export default function ResultsPreview({ origin = FALLBACK_ORIGIN }: { origin?: VisitorOrigin }) {
+  const searchHref = buildWidgetSearchPath(origin.code, RESULTS_PREVIEW_ROUTE.destination);
 
   return (
     <section className="py-20 px-4 max-w-5xl mx-auto">
@@ -76,7 +78,7 @@ export default function ResultsPreview() {
         ))}
       </div>
       <p className="text-center text-xs text-slate-400 mt-6">
-        Example results shown for illustration — click any card to search live prices for this route.
+        Example results shown for illustration — click any card to search live prices from {origin.city} to London.
       </p>
     </section>
   );

@@ -9,6 +9,8 @@ import { formatPrice } from "@/lib/utils";
 import { CountdownTimer } from "@/components/ui/CountdownTimer";
 import { Badge } from "@/components/ui/Badge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import type { VisitorOrigin } from "@/lib/geoOrigin";
+import { FALLBACK_ORIGIN } from "@/lib/geoOrigin";
 
 const TAG_STYLES: Record<string, string> = {
   "Flash Sale": "bg-rose-500 text-white",
@@ -18,22 +20,22 @@ const TAG_STYLES: Record<string, string> = {
   Luxury: "bg-amber-500 text-white",
 };
 
-export default function FeaturedDeals() {
+export default function FeaturedDeals({ origin = FALLBACK_ORIGIN }: { origin?: VisitorOrigin }) {
   return (
     <section id="deals" className="py-20 px-4 max-w-7xl mx-auto">
       <SectionHeading
         eyebrow="Today's Best Deals"
         title="Prices this good don't last"
-        description="A rotating mix of flash sales, weekend escapes, and business-class fares worth booking before they're gone."
+        description={`A rotating mix of flash sales, weekend escapes, and business-class fares from ${origin.city} — worth booking before they're gone.`}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {FEATURED_DEALS.map((deal, idx) => {
+        {FEATURED_DEALS.filter((deal) => deal.code !== origin.code).map((deal, idx) => {
           const savings = Math.round(((deal.originalPrice - deal.price) / deal.originalPrice) * 100);
           return (
             <motion.a
               key={deal.id}
-              href={buildWidgetSearchPath("JFK", deal.code)}
+              href={buildWidgetSearchPath(origin.code, deal.code)}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
@@ -57,7 +59,9 @@ export default function FeaturedDeals() {
                 </Badge>
                 <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
                   <div>
-                    <p className="text-white font-bold text-lg">{deal.city}</p>
+                    <p className="text-white font-bold text-lg">
+                      {origin.city} → {deal.city}
+                    </p>
                     <p className="text-white/60 text-xs">{deal.country}</p>
                   </div>
                 </div>

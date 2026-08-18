@@ -18,9 +18,15 @@ const WP_PLUGIN_NOOP_ATTRS = {
 
 interface TravelpayoutsWidgetProps {
   hasSearch?: boolean;
+  originCode?: string;
+  originCity?: string;
 }
 
-export default function TravelpayoutsWidget({ hasSearch = false }: TravelpayoutsWidgetProps) {
+export default function TravelpayoutsWidget({
+  hasSearch = false,
+  originCode,
+  originCity,
+}: TravelpayoutsWidgetProps) {
   return (
     <>
       <script
@@ -34,7 +40,7 @@ export default function TravelpayoutsWidget({ hasSearch = false }: Travelpayouts
       <div className="mx-auto w-full max-w-[920px]">
         <div className="rounded-2xl p-px bg-gradient-to-br from-white/40 via-white/10 to-accent-300/30 shadow-glow">
           <div className="rounded-[15px] sm:rounded-[15px] glass p-2 sm:p-2.5">
-            <SimpleSearchBar />
+            <SimpleSearchBar initialOrigin={originCode} initialOriginLabel={originCity} />
           </div>
         </div>
       </div>

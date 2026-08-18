@@ -9,14 +9,18 @@ import { formatPrice } from "@/lib/utils";
 
 interface PopularRoutesProps {
   routes: PopularRoute[];
+  originCity?: string;
 }
 
-export default function PopularRoutes({ routes }: PopularRoutesProps) {
+export default function PopularRoutes({ routes, originCity = "New York" }: PopularRoutesProps) {
   const displayRoutes = routes.length > 0 ? routes : FALLBACK_POPULAR_ROUTES;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {displayRoutes.slice(0, 9).map((route, idx) => {
+      {displayRoutes
+        .filter((route) => route.origin !== route.destination)
+        .slice(0, 9)
+        .map((route, idx) => {
         const dest = POPULAR_DESTINATIONS.find((d) => d.code === route.destination);
         const detail = DESTINATION_DETAILS[route.destination];
         const city = dest?.city ?? route.destination;
@@ -33,7 +37,7 @@ export default function PopularRoutes({ routes }: PopularRoutesProps) {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: (idx % 3) * 0.08 }}
             className="group relative overflow-hidden rounded-[24px] shadow-card hover:shadow-card-hover transition-shadow duration-500 block"
-            title={`Search flights to ${city}`}
+            title={`Search flights from ${originCity} to ${city}`}
           >
             <div className="relative aspect-[4/5] sm:aspect-[3/4]">
               {detail && (
@@ -78,7 +82,9 @@ export default function PopularRoutes({ routes }: PopularRoutesProps) {
 
                 <div className="flex items-end justify-between">
                   <div>
-                    <p className="text-white/50 text-[11px] mb-0.5">From New York · {getAirlineName(route.airline)}</p>
+                    <p className="text-white/50 text-[11px] mb-0.5">
+                      {originCity} → {city} · {getAirlineName(route.airline)}
+                    </p>
                     <p className="text-white font-bold text-3xl tracking-tight">{formatPrice(route.price)}</p>
                   </div>
                   <span className="w-10 h-10 rounded-full bg-white/15 group-hover:bg-white/25 backdrop-blur-sm text-white flex items-center justify-center transition-all group-hover:scale-105">

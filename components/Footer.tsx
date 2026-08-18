@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plane } from "lucide-react";
-import { buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/siteConfig";
+import FooterPopularRoutes from "@/components/FooterPopularRoutes";
 
 const COLUMNS = [
   {
@@ -11,15 +11,6 @@ const COLUMNS = [
       { label: "Today's Deals", href: "/#deals" },
       { label: "Popular Destinations", href: "/#popular" },
       { label: "How It Works", href: "/#how-it-works" },
-    ],
-  },
-  {
-    title: "Popular Routes",
-    links: [
-      { label: "New York → London", href: buildWidgetSearchPath("JFK", "LHR") },
-      { label: "Los Angeles → Tokyo", href: buildWidgetSearchPath("LAX", "NRT") },
-      { label: "New York → Paris", href: buildWidgetSearchPath("JFK", "CDG") },
-      { label: "London → Dubai", href: buildWidgetSearchPath("LHR", "DXB") },
     ],
   },
   {
@@ -62,6 +53,8 @@ export default function Footer() {
               sites. All bookings are completed on the airline or travel provider&apos;s website.
             </p>
           </div>
+
+          <FooterPopularRoutes />
 
           {COLUMNS.map((col) => (
             <div key={col.title}>

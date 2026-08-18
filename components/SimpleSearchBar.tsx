@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Calendar, ChevronDown, Plane, Search, X } from "lucide-react";
 import { buildWidgetSearchPath } from "@/lib/travelpayouts";
 import { cn } from "@/lib/utils";
+import { FALLBACK_ORIGIN } from "@/lib/geoOrigin";
+import { useVisitorOrigin } from "@/components/useVisitorOrigin";
 
 interface AirportOption {
   code: string;
@@ -41,11 +43,22 @@ function formatDisplayDate(iso: string) {
  * Submits via a full navigation into the Travelpayouts widget deep link
  * (`/?flightSearch=...`) so live results still come from the WL widget.
  */
-export default function SimpleSearchBar() {
-  const [origin, setOrigin] = useState("");
+export default function SimpleSearchBar({
+  initialOrigin,
+  initialOriginLabel,
+}: {
+  initialOrigin?: string;
+  initialOriginLabel?: string;
+}) {
+  const detected = useVisitorOrigin();
+  const defaultCode = initialOrigin || detected.code || FALLBACK_ORIGIN.code;
+  const defaultLabel = initialOriginLabel || detected.city || FALLBACK_ORIGIN.city;
+
+  const [origin, setOrigin] = useState(defaultCode);
   const [destination, setDestination] = useState("");
-  const [originLabel, setOriginLabel] = useState("");
+  const [originLabel, setOriginLabel] = useState(defaultLabel);
   const [destLabel, setDestLabel] = useState("");
+  const editedOrigin = useRef(false);
   const [departDate, setDepartDate] = useState(defaultDepartDate);
   const [returnDate, setReturnDate] = useState(defaultReturnDate);
   const [passengers, setPassengers] = useState(1);
@@ -62,6 +75,12 @@ export default function SimpleSearchBar() {
   const paxRef = useRef<HTMLDivElement>(null);
   const departRef = useRef<HTMLInputElement>(null);
   const returnRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editedOrigin.current || initialOrigin) return;
+    setOrigin(detected.code);
+    setOriginLabel(detected.city);
+  }, [detected.code, detected.city, initialOrigin]);
 
   const fetchSuggestions = useCallback(async (query: string) => {
     if (query.length < 2) return [] as AirportOption[];
@@ -168,6 +187,7 @@ export default function SimpleSearchBar() {
               type="text"
               value={originLabel}
               onChange={(e) => {
+                editedOrigin.current = true;
                 setOriginLabel(e.target.value);
                 setOrigin("");
                 setShowOrigin(true);
@@ -183,6 +203,7 @@ export default function SimpleSearchBar() {
             ) : null}
           </label>
           {showOrigin && dropdown(originSuggestions, (a) => {
+            editedOrigin.current = true;
             setOrigin(a.code);
             setOriginLabel(a.city ?? a.name);
             setShowOrigin(false);

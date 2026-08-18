@@ -52,9 +52,9 @@ export default function PrivacyPage() {
 
       <Section title="Location">
         <p>
-          We may use IP-based or similar technology to estimate your city or region for relevant travel results or
-          ads. We do not share your precise current location with other users. You can disable location access in
-          your device or browser settings.
+          We may use your IP address to estimate your city or nearby airport so we can pre-fill search origin and
+          show route ideas from where you are. If we cannot tell, we fall back to New York. We do not use precise GPS
+          unless you later choose that, and we do not share your location with other users.
         </p>
       </Section>
 

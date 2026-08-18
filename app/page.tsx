@@ -12,6 +12,8 @@ import SiteDisclaimer from "@/components/SiteDisclaimer";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getPopularRoutes } from "@/lib/travelpayouts";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/siteConfig";
+import { detectVisitorOrigin, FALLBACK_ORIGIN } from "@/lib/geoOrigin";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: `${SITE_NAME} — ${SITE_TAGLINE}`,
@@ -23,7 +25,8 @@ interface HomePageProps {
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
-  const popularRoutes = await getPopularRoutes("JFK").catch(() => []);
+  const origin = await detectVisitorOrigin(headers()).catch(() => FALLBACK_ORIGIN);
+  const popularRoutes = await getPopularRoutes(origin.code).catch(() => []);
 
   // Landing here with a `flightSearch` param means the widget is about to
   // show real results — drop every marketing section so the page isn't
@@ -33,22 +36,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <>
-      <Hero hasSearch={hasSearch} />
+      <Hero hasSearch={hasSearch} origin={origin} />
 
       {!hasSearch && (
         <>
-          <FeaturedDeals />
+          <FeaturedDeals origin={origin} />
 
           <section id="popular" className="py-20 px-4 max-w-7xl mx-auto">
             <SectionHeading
               eyebrow="Popular Destinations"
               title="Handpicked routes, real savings"
-              description="The best value routes from New York this season, refreshed regularly."
+              description={`The best value routes from ${origin.city} this season, refreshed regularly.`}
             />
-            <PopularRoutes routes={popularRoutes} />
+            <PopularRoutes routes={popularRoutes} originCity={origin.city} />
           </section>
 
-          <ResultsPreview />
+          <ResultsPreview origin={origin} />
           <TrustSection />
 
           <section id="how-it-works" className="py-20 px-4 bg-white">
@@ -60,7 +63,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
           <WhyChooseUs />
           <Testimonials />
-          <TravelInspiration />
+          <TravelInspiration origin={origin} />
         </>
       )}
 

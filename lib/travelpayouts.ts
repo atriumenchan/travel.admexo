@@ -378,7 +378,10 @@ export async function getPopularRoutes(origin: string): Promise<PopularRoute[]> 
         link: buildAffiliateLink(v.link),
       }));
   } catch {
-    return FALLBACK_POPULAR_ROUTES;
+    return FALLBACK_POPULAR_ROUTES.map((route) => ({
+      ...route,
+      origin,
+    }));
   }
 }
 
