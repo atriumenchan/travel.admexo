@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import HideChromeOnMobile from "@/components/HideChromeOnMobile";
 import {
   Phone,
@@ -70,11 +71,16 @@ export default function MobileSupportLanding() {
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-hero-gradient">
-        <div className="relative h-44 bg-hero-gradient">
-          <div className="absolute inset-0 flex items-center justify-center opacity-15">
-            <Plane className="w-36 h-36 text-white rotate-[-10deg]" />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-950/20 via-brand-950/55 to-brand-950" />
+        <div className="relative h-44">
+          <Image
+            src="/support/support-plane.jpg"
+            alt=""
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-brand-950/25 via-brand-950/55 to-brand-950" />
         </div>
 
         <div className="relative -mt-16 px-5 pb-8">
