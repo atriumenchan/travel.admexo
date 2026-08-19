@@ -3,7 +3,7 @@ import Link from "next/link";
 import SimpleSearchBar from "@/components/SimpleSearchBar";
 import SiteDisclaimer from "@/components/SiteDisclaimer";
 import MobileAirlineSupportLanding from "@/components/MobileAirlineSupportLanding";
-import { SITE_NAME, SITE_DISCLAIMER, SITE_TAGLINE } from "@/lib/siteConfig";
+import { SITE_NAME, SITE_TAGLINE } from "@/lib/siteConfig";
 import type { AirlineSlug } from "@/lib/mobileAirlineLanding";
 
 type AirlineLanding = {
@@ -125,8 +125,6 @@ export default function AirlineSearchLandingPage({ params }: { params: { airline
             needs, you are redirected to our travel partner or the airline to complete the booking securely.
           </p>
         </div>
-
-        <p className="text-xs text-slate-500 leading-relaxed">{SITE_DISCLAIMER}</p>
 
         <p className="text-sm text-slate-500">
           <Link href="/about" className="text-brand-600 hover:underline">

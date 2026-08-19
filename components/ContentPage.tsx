@@ -22,7 +22,7 @@ export default function ContentPage({ eyebrow, title, description, children, wid
       </section>
 
       <section className={`${wide ? "max-w-4xl" : "max-w-3xl"} mx-auto px-4 py-12 sm:py-16`}>
-        <div className="rounded-[24px] bg-white border border-slate-100 shadow-card p-6 sm:p-10 prose-skylerb">
+        <div className="rounded-[24px] bg-white border border-slate-100 shadow-card p-6 sm:p-10 prose-skylerb overflow-hidden">
           {children}
         </div>
         <p className="text-center text-sm text-slate-500 mt-8">
@@ -116,21 +116,18 @@ export function Scenario({
   );
 }
 
-export function InfoTable({ rows }: { rows: { label: string; value: string }[] }) {
+export function InfoTable({ rows }: { rows: { label: string; value: ReactNode }[] }) {
   return (
-    <div className="overflow-x-auto not-prose rounded-xl border border-slate-100">
-      <table className="w-full text-sm">
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.label} className="border-b border-slate-100 last:border-0">
-              <th className="text-left font-semibold text-slate-900 bg-slate-50 px-4 py-3 w-2/5 align-top">
-                {row.label}
-              </th>
-              <td className="px-4 py-3 text-slate-600 leading-relaxed">{row.value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="not-prose rounded-xl border border-slate-100 divide-y divide-slate-100 overflow-hidden">
+      {rows.map((row) => (
+        <div
+          key={row.label}
+          className="grid grid-cols-1 sm:grid-cols-[13rem_minmax(0,1fr)] gap-1 sm:gap-6 px-4 py-3.5"
+        >
+          <p className="font-semibold text-slate-900 text-sm leading-snug">{row.label}</p>
+          <div className="text-sm text-slate-600 leading-relaxed break-words min-w-0">{row.value}</div>
+        </div>
+      ))}
     </div>
   );
 }

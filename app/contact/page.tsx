@@ -8,7 +8,6 @@ import { BOOKING_SCENARIOS } from "@/lib/helpContent";
 import {
   SITE_NAME,
   SITE_TAGLINE,
-  SITE_DISCLAIMER,
   SUPPORT_PHONE_DISPLAY,
   SUPPORT_PHONE_TEL,
   SUPPORT_EMAIL,
@@ -28,7 +27,7 @@ export default function ContactPage() {
     <>
       <MobileSupportLanding />
 
-      <div className="hidden md:block">
+      <div className="hidden md:block overflow-x-hidden">
         <ContentPage
           title="Contact Us"
           description={`Reach ${SITE_NAME} for search help, website support, and partnership routing. ${SITE_TAGLINE}.`}
@@ -47,27 +46,58 @@ export default function ContactPage() {
               rows={[
                 {
                   label: "Help using the search tool",
-                  value: `Call ${SUPPORT_PHONE_DISPLAY} or email ${SUPPORT_EMAIL}`,
+                  value: (
+                    <>
+                      Call{" "}
+                      <a href={`tel:${SUPPORT_PHONE_TEL}`} className="text-brand-600 hover:underline font-medium">
+                        {SUPPORT_PHONE_DISPLAY}
+                      </a>{" "}
+                      or email{" "}
+                      <a href={`mailto:${SUPPORT_EMAIL}`} className="text-brand-600 hover:underline font-medium break-all">
+                        {SUPPORT_EMAIL}
+                      </a>
+                    </>
+                  ),
                 },
                 {
                   label: "Change / cancel existing ticket",
-                  value: "Contact the airline or OTA on your confirmation — see routing table below",
+                  value: "Contact the airline or travel agency on your confirmation. SkyLerb cannot change tickets.",
                 },
                 {
                   label: "Press & media",
-                  value: PRESS_EMAIL,
+                  value: (
+                    <a href={`mailto:${PRESS_EMAIL}`} className="text-brand-600 hover:underline font-medium break-all">
+                      {PRESS_EMAIL}
+                    </a>
+                  ),
                 },
                 {
                   label: "Partnerships & affiliates",
-                  value: PARTNERS_EMAIL,
+                  value: (
+                    <a href={`mailto:${PARTNERS_EMAIL}`} className="text-brand-600 hover:underline font-medium break-all">
+                      {PARTNERS_EMAIL}
+                    </a>
+                  ),
                 },
                 {
                   label: "Jobs & careers",
-                  value: CAREERS_EMAIL,
+                  value: (
+                    <a href={`mailto:${CAREERS_EMAIL}`} className="text-brand-600 hover:underline font-medium break-all">
+                      {CAREERS_EMAIL}
+                    </a>
+                  ),
                 },
                 {
                   label: "Legal / privacy requests",
-                  value: `${SUPPORT_EMAIL} with subject line “Privacy request”`,
+                  value: (
+                    <>
+                      Email{" "}
+                      <a href={`mailto:${SUPPORT_EMAIL}`} className="text-brand-600 hover:underline font-medium break-all">
+                        {SUPPORT_EMAIL}
+                      </a>{" "}
+                      with the subject “Privacy request”.
+                    </>
+                  ),
                 },
               ]}
             />
@@ -276,7 +306,6 @@ export default function ContactPage() {
                 Privacy Policy
               </Link>
             </p>
-            <p className="text-xs text-slate-400 pt-4">{SITE_DISCLAIMER}</p>
           </Section>
         </ContentPage>
 
